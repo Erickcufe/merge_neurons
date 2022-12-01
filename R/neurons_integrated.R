@@ -148,6 +148,158 @@ as <- FindIntegrationAnchors(so_neuron_merge, reference = c(Sample_96, Sample_50
                              verbose=TRUE, k.filter = 40)
 so_neuron_merge <- IntegrateData(anchorset = as, dims = seq_len(30), verbose = TRUE, k.weight = 30)
 
+#Scale integrated data
+DefaultAssay(so_neuron_merge) <- "integrated"
+so_neuron_merge <- ScaleData(so_neuron_merge, display.progress = FALSE)
+
+#DIMENSION REDUCTION
+so_neuron_merge <- RunPCA(so_neuron_merge, npcs = 50, verbose = FALSE)
+ElbowPlot(so_neuron_merge, ndims = 50)
+
+so_neuron_merge <- RunTSNE(so_neuron_merge, reduction = "pca", dims = seq_len(16),
+                           seed.use = 1, do.fast = TRUE, verbose = FALSE, check_duplicates = FALSE)
+so_neuron_merge <- RunUMAP(so_neuron_merge, reduction = "pca", dims = seq_len(16),
+                           seed.use = 1, verbose = FALSE)
+
+#CLUSTERING
+so_neuron_merge <- FindNeighbors(so_neuron_merge, reduction = "pca", dims = seq_len(16), verbose = FALSE)
+for (res in c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1))
+  so_neuron_merge <- FindClusters(so_neuron_merge, resolution = res, random.seed = 1, verbose = FALSE)
+
+
+#DR COLORED BY SAMPLE, GROUP, AND CLUSTER ID
+thm <- theme(aspect.ratio = 1, legend.position = "none")
+ps <- lapply(c("sample_id", "group_id", "ident"), function(u) {
+  p1 <- DimPlot(so_neuron_merge, reduction = "tsne", group.by = u) + thm
+  p2 <- DimPlot(so_neuron_merge, reduction = "umap", group.by = u)
+  lgd <- get_legend(p2)
+  p2 <- p2 + thm
+  list(p1, p2, lgd)
+  plot_grid(p1, p2, lgd, nrow = 1,
+            rel_widths = c(1, 1, 0.5))
+})
+plot_grid(plotlist = ps, ncol = 1)
+
+#Save SeuratObject
+saveRDS(so_neuron_merge, file.path("../Datos_scRNA", "so_neuron_merge_all_ref_16PC_SFG.rds"))
+
+#---------------------------------------------------------------------------------------------------
+#CLUSTER ANNOTATION
+
+#Load packages
+library(ComplexHeatmap)
+library(cowplot)
+library(ggplot2)
+library(dplyr)
+library(purrr)
+library(RColorBrewer)
+library(unikn)
+library(inauguration)
+library(wesanderson)
+library(scran)
+library(Seurat)
+library(SingleCellExperiment)
+
+#Load data and convert to SCE
+so_neuron_merge <- readRDS(file.path("../Datos_scRNA", "so_neuron_merge_all_ref_16PC_SFG.rds"))
+sce <- as.SingleCellExperiment(so_neuron_merge, assay = "RNA")
+colData(sce) <- as.data.frame(colData(sce)) %>%
+  mutate_if(is.character, as.factor) %>%
+  DataFrame(row.names = colnames(sce))
+
+#Define resolution
+cluster_cols <- grep("res.[0-9]", colnames(colData(sce)), value = TRUE)
+sapply(colData(sce)[cluster_cols], nlevels)
+
+so_neuron_merge <- SetIdent(so_neuron_merge, value = "integrated_snn_res.0.4")
+so_neuron_merge@meta.data$cluster_id <- Idents(so_neuron_merge)
+sce$cluster_id <- Idents(so_neuron_merge)
+(n_cells <- table(sce$cluster_id, sce$sample_id))
+write.csv(table(sce$cluster_id, sce$sample_id), "../data_tmp_h5/neuron_integrated_EC/so_neuron_merge_all-ref_MGZS_20PC_res0.4_numbers.csv")
+
+nk <- length(kids <- set_names(levels(sce$cluster_id)))
+ns <- length(sids <- set_names(levels(sce$sample_id)))
+ng <- length(gids <- set_names(levels(sce$group_id)))
+
+#Choose color palettes for cluster, sample, group IDs, and # cells
+pal <- CATALYST:::.cluster_cols
+cluster_id_pal <- set_names(pal[seq_len(nk)], kids)
+sample_id_pal <- set_names(pal[seq_len(ns) + nk], sids)
+group_id_pal <- set_names(c("royalblue", "red"), gids)
+
+#Generate relative cluster abundances
+fqs <- prop.table(n_cells, margin = 2)
+mat <- as.matrix(unclass(fqs))
+Heatmap(mat,
+        col = rev(brewer.pal(11, "RdGy")[-6]),
+        name = "Frequency",
+        cluster_rows = FALSE,
+        cluster_columns = FALSE,
+        row_names_side = "left",
+        row_title = "cluster_id",
+        column_title = "sample_id",
+        column_title_side = "bottom",
+        rect_gp = gpar(col = "white"),
+        cell_fun = function(i, j, x, y, width, height, fill)
+          grid.text(round(mat[j, i] * 100, 2), x = x, y = y,
+                    gp = gpar(col = "white", fontsize = 8)))
+#DR colored by cluster ID
+cs <- sample(colnames(so_neuron_merge), 5e3)
+.plot_dr <- function(so_neuron_merge, dr, id)
+  DimPlot(so_neuron_merge, cells = cs, group.by = id, reduction = dr, pt.size = 0.4) +
+  scale_color_manual(id, values = get(paste0(id, "_pal"))) +
+  guides(col = guide_legend(nrow = 10,
+                            override.aes = list(size = 3, alpha = 1))) +
+  theme_void() + theme(aspect.ratio = 1)
+
+ids <- c("cluster_id", "group_id", "sample_id")
+for (id in ids) {
+  cat("## ", id, "\n")
+  p1 <- .plot_dr(so_neuron_merge, "tsne", id)
+  lgd <- get_legend(p1)
+  p1 <- p1 + theme(legend.position = "none")
+  p2 <- .plot_dr(so_neuron_merge, "umap", id) + theme(legend.position = "none")
+  ps <- plot_grid(plotlist = list(p1, p2), nrow = 1)
+  p <- plot_grid(ps, lgd, nrow = 1, rel_widths = c(1, 0.2))
+  print(p)
+  cat("\n\n")
+}
+
+library(densvis)
+dt <- densne(reducedDim(sce, "PCA"), dens_frac = 0.4, dens_lambda = 0.2)
+reducedDim(sce, "dens-SNE") <- dt
+dm <- densmap(reducedDim(sce, "PCA"), dens_frac = 0.4, dens_lambda = 0.2)
+reducedDim(sce, "densMAP") <- dm
+
+library(scater)
+
+gridExtra::grid.arrange(
+  plotReducedDim(sce, "TSNE", colour_by="ident") + ggtitle("t-SNE") +
+    theme(text = element_text(size = 20)),
+  plotReducedDim(sce, "dens-SNE", colour_by="ident") + ggtitle("dens-SNE")+
+    theme(text = element_text(size = 20)),
+  plotReducedDim(sce, "UMAP", colour_by="ident") + ggtitle("UMAP") +
+    theme(text = element_text(size = 20)),
+  plotReducedDim(sce, "densMAP", colour_by="ident") + ggtitle("densMAP") +
+    theme(text = element_text(size = 20)),
+  ncol=2
+)
+
+## Volvemos a Seurat a pasarle la informacion generada con SingleCellExperiment
+so_neuron_merge@meta.data$Proplabels <- sce$ProbLabels
+so_neuron_merge[["dens_sne"]] <- CreateDimReducObject(embeddings = reducedDim(sce, "dens-SNE"), key = "dens-sne", assay = DefaultAssay(so_neuron_merge))
+so_neuron_merge[["dens_map"]] <- CreateDimReducObject(embeddings = reducedDim(sce, "densMAP"), key = "dens-map", assay = DefaultAssay(so_neuron_merge))
+
+
+#QC METRICS CHECK
+mito.genes <- grep(pattern = "^MT-", x = rownames(so_neuron_merge@assays[["RNA"]]), value = TRUE)
+percent.mito <- Matrix::colSums(so_neuron_merge@assays[["RNA"]][mito.genes, ])/Matrix::colSums(so_neuron_merge@assays[["RNA"]])
+so_neuron_merge$percent.mito <- percent.mito
+
+rb.genes <- grep(pattern = "^RP[SL]", x = rownames(so_neuron_merge@assays[["RNA"]]), value = TRUE)
+percent.rb <- Matrix::colSums(so_neuron_merge@assays[["RNA"]][rb.genes, ])/Matrix::colSums(so_neuron_merge@assays[["RNA"]])
+so_neuron_merge$percent.rb <- percent.rb
+
 
 
 
