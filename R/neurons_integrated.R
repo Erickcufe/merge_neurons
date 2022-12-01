@@ -300,8 +300,101 @@ rb.genes <- grep(pattern = "^RP[SL]", x = rownames(so_neuron_merge@assays[["RNA"
 percent.rb <- Matrix::colSums(so_neuron_merge@assays[["RNA"]][rb.genes, ])/Matrix::colSums(so_neuron_merge@assays[["RNA"]])
 so_neuron_merge$percent.rb <- percent.rb
 
+VlnPlot(object = so_neuron_merge, features = c("nFeature_RNA", "nCount_RNA", "percent.mito"), ncol = 3, pt.size = 0, cols = (usecol("pal_unikn_pair", 22)))
+
+VlnPlot(object = so_neuron_merge, features = c("nFeature_RNA"), pt.size = 0, cols = (usecol("pal_unikn_pair", 22))) + stat_summary(fun.y=median, geom="point", shape=23, size=2)
+
+so_neuron_merge_copy <- so_neuron_merge
+Idents(so_neuron_merge_copy) <- "dataset"
+designated_levels <- c("Morabito", "Kun_Leng", "Saddick")
+Idents(so_neuron_merge_copy) <- factor(Idents(so_neuron_merge_copy), levels= designated_levels)
+DefaultAssay(so_neuron_merge_copy) <- "RNA"
+VlnPlot(object = so_neuron_merge_copy, features = c("nFeature_RNA", "nCount_RNA", "percent.mito"), ncol = 3, pt.size = 0, cols = inauguration("inauguration_2021", 4))
+
+#Generate summary statistics for entire dataset
+summary(so_neuron_merge$nFeature_RNA)
+summary(so_neuron_merge$nCount_RNA)
+
+library(pastecs)
+stat.desc(so_neuron_merge$nFeature_RNA)
+stat.desc(so_neuron_merge$nCount_RNA)
+
+library(psych)
+describe(so_neuron_merge$nFeature_RNA)
+describe(so_neuron_merge$nCount_RNA)
+
+#Generate summary statistics per sample
+library(data.table)
+library(psych)
+feature_by_sample <- as.data.frame(so_neuron_merge$nFeature_RNA, row.names = so_neuron_merge$sample_id)
+feature_by_sample_table <- describeBy(feature_by_sample, group = so_neuron_merge$sample_id, mat = TRUE)
+write.csv(feature_by_sample_table, "../Datos_scRNA/neurons_integrated/SFG/so_neuron_merge_all-ref_MGZS_20PC_res0.4_QC_feature_by_sample.csv")
+
+count_by_sample <- as.data.frame(so_neuron_merge$nCount_RNA, row.names = so_neuron_merge$sample_id)
+count_by_sample_table <- describeBy(count_by_sample, group = so_neuron_merge$sample_id, mat = TRUE)
+write.csv(count_by_sample_table, "../Datos_scRNA/neurons_integrated/SFG/so_neuron_merge_all-ref_MGZS_20PC_res0.4_QC_count_by_sample.csv")
+
+#Generate summary statistics per cluster
+library(data.table)
+library(psych)
+feature_by_cluster <- as.data.frame(so_neuron_merge$nFeature_RNA, row.names = so_neuron_merge$cluster_id)
+feature_by_cluster_table <- describeBy(feature_by_cluster, group = so_neuron_merge$cluster_id, mat = TRUE)
+write.csv(feature_by_cluster_table, "../Datos_scRNA/neurons_integrated/SFG/so_neuron_merge_all-ref_MGZS_20PC_res0.4_QC_feature_by_cluster.csv")
+
+count_by_cluster <- as.data.frame(so_neuron_merge$nCount_RNA, row.names = so_neuron_merge$cluster_id)
+count_by_cluster_table <- describeBy(count_by_cluster, group = so_neuron_merge$cluster_id, mat = TRUE)
+write.csv(count_by_cluster_table, "../Datos_scRNA/neurons_integrated/SFG/so_neuron_merge_all-ref_MGZS_20PC_res0.4_QC_count_by_cluster.csv")
+
+#Assess astrocyte clusters
+DefaultAssay(so_neuron_merge) <- "RNA"
+DimPlot(so_neuron_merge, reduction = "tsne", pt.size = 0.001) + theme(aspect.ratio = 1) #+scale_color_manual(values = usecol("pal_unikn_dark"))
+
+#Find all markers
+DefaultAssay(so_neuron_merge) <- "RNA"
+so_neuron_merge.markers <- FindAllMarkers(so_neuron_merge, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0.25)
+write.csv(so_neuron_merge.markers, "../Datos_scRNA/neurons_integrated/SFG/so_neuron_merge_all-ref_MGZS_20PC_res0.4_genes-RNA.csv")
 
 
+saveRDS(so_neuron_merge, "../Datos_scRNA/neurons_integrated/SFG/datos_integrados_sinAnotar.rds")
+
+jpeg("images/neurons_EC_clusters_DATASETS_dens_map_markers.jpeg", units="in", width=15, height=10, res=300)
+
+DimPlot(so_neuron_merge, reduction = "dens_map", group.by = "dataset", pt.size = 0.001, cols = rev(inauguration("inauguration_2021", 4))) +
+  theme(aspect.ratio = 1, text = element_text(size = 20))
+
+dev.off()
+
+## Potassio channels
+potassium <- c("KCNA1", "KCNA2", "KCNA3", "KCNA4", "KCNA5", "KCNA6",
+               "KCNB1", "KCNB2", "KCNB3", "KCND1", "KCND2", "KCND3",
+               "KCNF1", "KCNG4", "KCNH1", "KCNH2", "KCNMA1", "KCNN1", "KCNN2")
+FeaturePlot(so_neuron_merge, features = potassium, reduction = "tsne",
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 20)
+
+
+## Calcium channels
+
+calcium <- c("GAPDH", "SLC17A6", "SLC17A7", "SLC6A5", "HCN1", "HCN2",
+             "HCN1", "SCN1A", "SCN1B", "SCN2A1", "SCN2B", "SCN3A", "SCN3B",
+             "SCN4B", "SCN8A", "CCK", "COCH", "COL5A1", "CRH", "CRHBP",
+             "GRIN2C", "GSG1L", "HSPB8", "SEMA3A", "SPP1", "SST", "TACR3")
+
+FeaturePlot(so_neuron_merge, features = calcium, reduction = "tsne",
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 20)
+
+all_markers <- c(potassium, calcium)
+
+FeaturePlot(so_neuron_merge, features = all_markers, reduction = "tsne",
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 20)
+
+
+#https://doi.org/10.1073/pnas.1507125112
+VIP_neurons <- c("GAD", "VGLUT1", "VIP", "SOX6", "LHX6", "TAC3", "ADARB2", "PROX1")
+
+jpeg("images/neurons_SFG_clusters_VIP_markers.jpeg", units="in", width=15, height=10, res=300)
+FeaturePlot(so_neuron_merge, features = VIP_neurons, reduction = "dens_map",
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 20)
+dev.off()
 
 
 
