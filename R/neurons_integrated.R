@@ -396,5 +396,10 @@ FeaturePlot(so_neuron_merge, features = VIP_neurons, reduction = "dens_map",
             cols = c("#EBE6E5","#EA0C3E"), label.size = 20)
 dev.off()
 
-
+so.renamed <- RenameIdents(so_neuron_merge, `0` = "Ex", `1` = "Vip", `2` = "Ex",
+                           `3` = "Inh", `4` = "Ex", `5`= "Ex",
+                           `6` = "Ex", `7`= "Pvalb", `8`= "Ex", `9`= "Ex",
+                           `10`= "Inh", `11`= "Pvalb", `12`= "Ex",
+                           `13`= "Inh", `14`= "Inh", `15`= "Ex",
+                           `16`= "Inh", `17`= "Ex", `18`= "Ex")
 
