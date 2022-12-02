@@ -347,7 +347,7 @@ write.csv(count_by_cluster_table, "../Datos_scRNA/neurons_integrated/SFG/so_neur
 
 #Assess astrocyte clusters
 DefaultAssay(so_neuron_merge) <- "RNA"
-DimPlot(so_neuron_merge, reduction = "tsne", pt.size = 0.001) + theme(aspect.ratio = 1) #+scale_color_manual(values = usecol("pal_unikn_dark"))
+DimPlot(so_neuron_merge, reduction = "dens_map", pt.size = 0.001) + theme(aspect.ratio = 1) #+scale_color_manual(values = usecol("pal_unikn_dark"))
 
 #Find all markers
 DefaultAssay(so_neuron_merge) <- "RNA"
@@ -391,15 +391,27 @@ FeaturePlot(so_neuron_merge, features = all_markers, reduction = "tsne",
 #https://doi.org/10.1073/pnas.1507125112
 VIP_neurons <- c("GAD", "VGLUT1", "VIP", "SOX6", "LHX6", "TAC3", "ADARB2", "PROX1")
 
+vip <- c("VIP", "PROX1", "ADARB2", "GAD1")
+
 jpeg("images/neurons_SFG_clusters_VIP_markers.jpeg", units="in", width=15, height=10, res=300)
-FeaturePlot(so_neuron_merge, features = VIP_neurons, reduction = "dens_map",
+FeaturePlot(so_neuron_merge, features = vip, reduction = "dens_map",
             cols = c("#EBE6E5","#EA0C3E"), label.size = 20)
 dev.off()
 
-so.renamed <- RenameIdents(so_neuron_merge, `0` = "Ex", `1` = "Vip", `2` = "Ex",
-                           `3` = "Inh", `4` = "Ex", `5`= "Ex",
-                           `6` = "Ex", `7`= "Pvalb", `8`= "Ex", `9`= "Ex",
+#https://doi.org/10.1038/s41467-020-20328-4
+pvalb <- c("PVALB", "SST", "VIP", "NXPH1", "GAD1","ERBB4", "NGF", "TAC1", "GFRA1", "PLCH2", "TLL1", "SOX6")
+
+jpeg("images/neurons_SFG_clusters_VIP_sst_PV_markers.jpeg", units="in", width=15, height=10, res=300)
+FeaturePlot(so_neuron_merge, features = pvalb, reduction = "dens_map",
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 20)
+dev.off()
+
+so.renamed <- RenameIdents(so_neuron_merge, `0` = "Ex", `1` = "Ex", `2` = "Ex",
+                           `3` = "Inh", `4` = "Vip", `5`= "Ex",
+                           `6` = "Ex", `7`= "Pvalb", `8`= "Vip", `9`= "Ex",
                            `10`= "Inh", `11`= "Pvalb", `12`= "Ex",
                            `13`= "Inh", `14`= "Inh", `15`= "Ex",
-                           `16`= "Inh", `17`= "Ex", `18`= "Ex")
+                           `16`= "Inh", `17`= "Ex", `18`= "Ex",
+                           `19` = "Ex", `20` = "Ex", `21` = "Ex")
+DimPlot(so.renamed,reduction = "dens_map", cols = usecol("pal_unikn_pair", 4), label.size = 20)
 
