@@ -247,7 +247,7 @@ pred <- SingleR(test = sce, ref = sce_sfg,
                 BPPARAM= BiocParallel::MulticoreParam(7)) # 8 CPUs.
 pred_modf <- pred[!duplicated(row.names(pred)),]
 
-jpeg("images/plotScoreHeatmap.jpeg", units="in", width=10, height=10, res=300)
+jpeg("images/EC_plotScoreHeatmap.jpeg", units="in", width=10, height=10, res=300)
 plotScoreHeatmap(pred_modf)
 dev.off()
 
@@ -262,6 +262,7 @@ reducedDim(sce, "densMAP") <- dm
 
 library(scater)
 
+jpeg("images/EC_clusters_neurons.jpeg", units="in", width=10, height=10, res=300)
 gridExtra::grid.arrange(
   plotReducedDim(sce, "TSNE", colour_by="ident") + ggtitle("t-SNE") +
     theme(text = element_text(size = 20)),
@@ -273,6 +274,9 @@ gridExtra::grid.arrange(
     theme(text = element_text(size = 20)),
   ncol=2
 )
+
+dev.off()
+
 
 ## Volvemos a Seurat a pasarle la informacion generada con SingleCellExperiment
 so_neuron_merge@meta.data$Proplabels <- sce$ProbLabels
