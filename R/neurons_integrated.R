@@ -399,19 +399,35 @@ FeaturePlot(so_neuron_merge, features = vip, reduction = "dens_map",
 dev.off()
 
 #https://doi.org/10.1038/s41467-020-20328-4
-pvalb <- c("PVALB", "SST", "VIP", "NXPH1", "GAD1","ERBB4", "NGF", "TAC1", "GFRA1", "PLCH2", "TLL1", "SOX6")
+pvalb <- c("PVALB", "SST", "VIP", "RELN", "NXPH1", "GAD1","ERBB4","SOX6","ADARB2")
 
 jpeg("images/neurons_SFG_clusters_VIP_sst_PV_markers.jpeg", units="in", width=15, height=10, res=300)
 FeaturePlot(so_neuron_merge, features = pvalb, reduction = "dens_map",
-            cols = c("#EBE6E5","#EA0C3E"), label.size = 20)
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 26, pt.size = 1)
 dev.off()
 
-so.renamed <- RenameIdents(so_neuron_merge, `0` = "Ex", `1` = "Ex", `2` = "Ex",
-                           `3` = "Inh", `4` = "Vip", `5`= "Ex",
-                           `6` = "Ex", `7`= "Pvalb", `8`= "Vip", `9`= "Ex",
-                           `10`= "Inh", `11`= "Pvalb", `12`= "Ex",
-                           `13`= "Inh", `14`= "Inh", `15`= "Ex",
-                           `16`= "Inh", `17`= "Ex", `18`= "Ex",
+so.renamed <- RenameIdents(so_neuron_merge, `0` = "Ex", `1` = "Ex", `2` = "Pv",
+                           `3` = "Ex", `4` = "Vip", `5`= "Sst",
+                           `6` = "Ex", `7`= "Ex", `8`= "Vip", `9`= "Ex",
+                           `10`= "Non-Vip", `11`= "Ex", `12`= "Ex",
+                           `13`= "Ex", `14`= "Non-Vip", `15`= "Pv",
+                           `16`= "Non-Vip", `17`= "Non-Vip", `18`= "Ex",
                            `19` = "Ex", `20` = "Ex", `21` = "Ex")
-DimPlot(so.renamed,reduction = "dens_map", cols = usecol("pal_unikn_pair", 4), label.size = 20)
 
+saveRDS(so.renamed, "../Datos_scRNA/neurons_integrated/SFG/datos_integrados_Anotados.rds")
+
+jpeg("images/neurons_SFG_clusters_anotados_dens_map.jpeg", units="in", width=15, height=10, res=300)
+DimPlot(so.renamed,reduction = "dens_map", cols = usecol("pal_unikn_pair", 5), label.size = 26, pt.size = 1)
+dev.off()
+
+jpeg("images/neurons_SFG_clusters_anotados_dens_sne.jpeg", units="in", width=15, height=10, res=300)
+DimPlot(so.renamed,reduction = "dens_sne", cols = usecol("pal_unikn_pair", 5), label.size = 26, pt.size = 1)
+dev.off()
+
+jpeg("images/neurons_SFG_clusters_anotados_tsne.jpeg", units="in", width=15, height=10, res=300)
+DimPlot(so.renamed,reduction = "tsne", cols = usecol("pal_unikn_pair", 5), label.size = 26, pt.size = 1)
+dev.off()
+
+jpeg("images/neurons_SFG_clusters_anotados_umap.jpeg", units="in", width=15, height=10, res=300)
+DimPlot(so.renamed,reduction = "umap", cols = usecol("pal_unikn_pair", 5), label.size = 26, pt.size = 1)
+dev.off()
