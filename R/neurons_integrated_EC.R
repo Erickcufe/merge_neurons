@@ -264,14 +264,30 @@ library(scater)
 
 jpeg("images/EC_clusters_neurons.jpeg", units="in", width=10, height=10, res=300)
 gridExtra::grid.arrange(
-  plotReducedDim(sce, "TSNE", colour_by="ident") + ggtitle("t-SNE") +
+  plotReducedDim(sce, "TSNE", colour_by="ProbLabels", point_size = 0.4) + ggtitle("t-SNE") +
+    theme(text = element_text(size = 20)) + scale_color_manual(values = usecol("pal_unikn_pair", 5)),
+  plotReducedDim(sce, "dens-SNE", colour_by="ProbLabels", point_size = 0.4) + ggtitle("dens-SNE")+
+    theme(text = element_text(size = 20))+ scale_color_manual(values = usecol("pal_unikn_pair", 5)),
+  plotReducedDim(sce, "UMAP", colour_by="ProbLabels", point_size = 0.4) + ggtitle("UMAP") +
+    theme(text = element_text(size = 20))+ scale_color_manual(values = usecol("pal_unikn_pair", 5)),
+  plotReducedDim(sce, "densMAP", colour_by="ProbLabels", point_size = 0.4) + ggtitle("densMAP") +
+    theme(text = element_text(size = 20))+ scale_color_manual(values = usecol("pal_unikn_pair", 5)),
+  ncol=2
+)
+
+dev.off()
+
+jpeg("images/EC_controles.jpeg", units="in", width=10, height=10, res=300)
+gridExtra::grid.arrange(
+  plotReducedDim(sce, "TSNE", colour_by="sample_id") + ggtitle("sample_id") +
+    theme(text = element_text(size = 20)) ,
+  plotReducedDim(sce, "TSNE", colour_by="group_id") + ggtitle("group_id")+
     theme(text = element_text(size = 20)),
-  plotReducedDim(sce, "dens-SNE", colour_by="ident") + ggtitle("dens-SNE")+
+  plotReducedDim(sce, "TSNE", colour_by="cluster_id") + ggtitle("cluster_id") +
     theme(text = element_text(size = 20)),
-  plotReducedDim(sce, "UMAP", colour_by="ident") + ggtitle("UMAP") +
-    theme(text = element_text(size = 20)),
-  plotReducedDim(sce, "densMAP", colour_by="ident") + ggtitle("densMAP") +
-    theme(text = element_text(size = 20)),
+  plotReducedDim(sce, "TSNE", colour_by="ProbLabels") + ggtitle("Labels") +
+    theme(text = element_text(size = 20)) +
+    scale_color_manual(values = usecol(pal = "pal_unikn_pref")),
   ncol=2
 )
 
@@ -302,7 +318,7 @@ Idents(so_neuron_merge_copy) <- "dataset"
 designated_levels <- c("Morabito", "Kun_Leng", "Saddick")
 Idents(so_neuron_merge_copy) <- factor(Idents(so_neuron_merge_copy), levels= designated_levels)
 DefaultAssay(so_neuron_merge_copy) <- "RNA"
-VlnPlot(object = so_neuron_merge_copy, features = c("nFeature_RNA", "nCount_RNA", "percent.mito"), ncol = 3, pt.size = 0, cols = inauguration("inauguration_2021", 4))
+# VlnPlot(object = so_neuron_merge_copy, features = c("nFeature_RNA", "nCount_RNA", "percent.mito"), ncol = 3, pt.size = 0, cols = inauguration("inauguration_2021", 4))
 
 #Generate summary statistics for entire dataset
 summary(so_neuron_merge$nFeature_RNA)
@@ -350,12 +366,30 @@ write.csv(so_neuron_merge.markers, "../Datos_scRNA/neurons_integrated/EC/so_neur
 
 saveRDS(so_neuron_merge, "../Datos_scRNA/neurons_integrated/EC/datos_integrados_Anotados.rds")
 
-jpeg("images/neurons_EC_clusters_DATASETS_dens_map_markers.jpeg", units="in", width=15, height=10, res=300)
+jpeg("images/neurons_EC_clusters_DATASETS_umap_markers.jpeg", units="in", width=15, height=10, res=300)
 
-DimPlot(so_neuron_merge, reduction = "dens_map", group.by = "dataset", pt.size = 0.001, cols = rev(inauguration("inauguration_2021", 4))) +
+DimPlot(so_neuron_merge, reduction = "umap", group.by = "dataset", pt.size = 0.001, cols = rev(inauguration("inauguration_2021", 4))) +
   theme(aspect.ratio = 1, text = element_text(size = 20))
 
 dev.off()
+
+
+jpeg("images/neurons_EC_clusters_anotados_dens_map.jpeg", units="in", width=15, height=10, res=300)
+DimPlot(so_neuron_merge,reduction = "dens_map", cols = usecol("pal_unikn_pair", 16), label.size = 26, pt.size = 1)
+dev.off()
+
+jpeg("images/neurons_EC_clusters_anotados_dens_sne.jpeg", units="in", width=15, height=10, res=300)
+DimPlot(so_neuron_merge,reduction = "dens_sne", cols = usecol("pal_unikn_pair", 5), label.size = 26, pt.size = 1)
+dev.off()
+
+jpeg("images/neurons_EC_clusters_anotados_tsne.jpeg", units="in", width=15, height=10, res=300)
+DimPlot(so_neuron_merge,reduction = "tsne", cols = usecol("pal_unikn_pair", 5), label.size = 26, pt.size = 1)
+dev.off()
+
+jpeg("images/neurons_EC_clusters_anotados_umap.jpeg", units="in", width=15, height=10, res=300)
+DimPlot(so_neuron_merge,reduction = "umap", cols = usecol("pal_unikn_pair", 5), label.size = 26, pt.size = 1)
+dev.off()
+
 
 
 so.renamed <- RenameIdents(so_neuron_merge, `0` = "Ex", `1` = "Ex", `2` = "Pv",
