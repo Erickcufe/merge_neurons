@@ -157,7 +157,8 @@ so.renamed <- RenameIdents(so_neuron_merge, `0` = "Ex", `1` = "Ex", `2` = "Pv",
 
 
 
-
-
+genes <- read.csv("../Mapping_nonconding/genes.csv")
+FeaturePlot(so_neuron_merge, features = genes$x, reduction = "dens_map",
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 26, pt.size = 1)
 
 
