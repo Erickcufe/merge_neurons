@@ -121,7 +121,15 @@ pred <- SingleR(test = sce, ref = sce_sfg,
                 BPPARAM= BiocParallel::MulticoreParam(7)) # 8 CPUs.
 pred_modf <- pred[!duplicated(row.names(pred)),]
 colData(sce)$ProbLabels <- pred$labels
+plotScoreHeatmap(pred_modf)
 
+library(densvis)
+dt <- densne(reducedDim(sce, "PCA"), dens_frac = 0.4, dens_lambda = 0.2)
+reducedDim(sce, "dens-SNE") <- dt
+dm <- densmap(reducedDim(sce, "PCA"), dens_frac = 0.4, dens_lambda = 0.2)
+reducedDim(sce, "densMAP") <- dm
+
+jpeg("images/EC_clusters_neurons.jpeg", units="in", width=10, height=10, res=300)
 gridExtra::grid.arrange(
   plotReducedDim(sce, "TSNE", colour_by="ProbLabels", point_size = 0.4) + ggtitle("t-SNE") +
     theme(text = element_text(size = 20)) + scale_color_manual(values = usecol("pal_unikn_pair", 5)),
@@ -133,3 +141,13 @@ gridExtra::grid.arrange(
     theme(text = element_text(size = 20))+ scale_color_manual(values = usecol("pal_unikn_pair", 5)),
   ncol=2
 )
+dev.off()
+
+## Volvemos a Seurat a pasarle la informacion generada con SingleCellExperiment
+so_neuron_merge@meta.data$Proplabels <- sce$ProbLabels
+so_neuron_merge[["dens_sne"]] <- CreateDimReducObject(embeddings = reducedDim(sce, "dens-SNE"), key = "dens-sne", assay = DefaultAssay(so_neuron_merge))
+so_neuron_merge[["dens_map"]] <- CreateDimReducObject(embeddings = reducedDim(sce, "densMAP"), key = "dens-map", assay = DefaultAssay(so_neuron_merge))
+
+Idents(so_neuron_merge) <- so_neuron_merge$Proplabels
+
+saveRDS(so_neuron_merge, "../Datos_scRNA/neurons_integrated/EC/datos_integrados_Anotados.rds")
