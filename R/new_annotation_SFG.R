@@ -84,7 +84,15 @@ jpeg("images/neurons_EC_clusters_all_LAYERS_SEMINARIO.jpeg", units="in", width=1
 FeaturePlot(dummy_neuron, features = c("LTK", "FREM3", "GLP2R", "CARM1P1", "COL22A1"), reduction = "umap",
             cols = c("#EBE6E5","#EA0C3E"), label.size = 26, pt.size = 1)
 dev.off()
+
+
+# For heat sensation
+FeaturePlot(dummy_neuron, features = c("ERBB4", "TRPV1", "NRG1", "CCK", "SST"), reduction = "umap",
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 26, pt.size = 1)
 # neurons$seurat_clusters
 
+jpeg("images_Neurons_SFG/new_annotation_SFG.jpeg", units="in", width=15, height=10, res=300)
 DimPlot(so.renamed,reduction = "umap", cols = usecol("pal_unikn_pair", 16), label.size = 26, pt.size = 1)
+dev.off()
 
+saveRDS(so.renamed, "new_anotation_SFG.rds")
