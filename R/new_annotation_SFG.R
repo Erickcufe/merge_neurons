@@ -96,3 +96,16 @@ DimPlot(so.renamed,reduction = "umap", cols = usecol("pal_unikn_pair", 16), labe
 dev.off()
 
 saveRDS(so.renamed, "new_anotation_SFG.rds")
+
+## SE VOLVIO A RE ANOTAR
+so.renamed <- readRDS("../Datos_scRNA/neurons_integrated/SFG/datos_integrados_Anotados.rds")
+Idents(so.renamed) <- so.renamed$cluster_id
+so.renamed <- RenameIdents(so.renamed, `0` = "Ex", `1` = "Ex", `2` = "Pv",
+                           `3` = "RORB+", `4` = "Vip", `5`= "Sst",
+                           `6` = "RORB+", `7`= "RORB+", `8`= "Vip", `9`= "Ex",
+                           `10`= "Non-Vip", `11`= "Ex", `12`= "Ex",
+                           `13`= "Ex", `14`= "Non-Vip", `15`= "Pv",
+                           `16`= "Non-Vip", `17`= "Non-Vip", `18`= "Ex",
+                           `19` = "RORB+", `20` = "Ex", `21` = "Ex")
+
+saveRDS(so.renamed, "new_anotation_SFG_withoutCNB.rds")
