@@ -201,7 +201,7 @@ library(Seurat)
 library(SingleCellExperiment)
 
 #Load data and convert to SCE
-so_neuron_merge <- readRDS(file.path("../Datos_scRNA", "so_neuron_merge_all_ref_16PC_SFG.rds"))
+so_neuron_merge <- readRDS(file.path("../Datos_scRNA/neurons_integrated/SFG", "so_neuron_merge_all_ref_16PC_SFG.rds"))
 sce <- as.SingleCellExperiment(so_neuron_merge, assay = "RNA")
 colData(sce) <- as.data.frame(colData(sce)) %>%
   mutate_if(is.character, as.factor) %>%
