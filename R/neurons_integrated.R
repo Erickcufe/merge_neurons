@@ -40,7 +40,7 @@ so_neuron_merge <- merge(x = so_Leng_EC_neuron, y = c(so_morabito_neuron, so_Sad
 #Remove integrated data associated with object and shift assay into RNA assay
 DefaultAssay(so_neuron_merge) <- "RNA"
 so_neuron_merge[['integrated']] <- NULL
-saveRDS(so_neuron_merge, file.path("../Datos_scRNA", "CR4_so_Neuron_merge_all_unint.rds"))
+saveRDS(so_neuron_merge, file.path("../Datos_scRNA/neurons_integrated/SFG", "CR4_so_Neuron_merge_all_unint.rds"))
 
 #---------------------------------------------------------------------------------------------------
 #CLUSTERING
@@ -181,7 +181,7 @@ ps <- lapply(c("sample_id", "group_id", "ident"), function(u) {
 plot_grid(plotlist = ps, ncol = 1)
 
 #Save SeuratObject
-saveRDS(so_neuron_merge, file.path("../Datos_scRNA", "so_neuron_merge_all_ref_16PC_SFG.rds"))
+saveRDS(so_neuron_merge, file.path("../Datos_scRNA/neurons_integrated/SFG", "so_neuron_merge_all_ref_16PC_SFG.rds"))
 
 #---------------------------------------------------------------------------------------------------
 #CLUSTER ANNOTATION
@@ -214,11 +214,11 @@ sapply(colData(sce)[cluster_cols], nlevels)
 so_neuron_merge <- SetIdent(so_neuron_merge, value = "integrated_snn_res.0.4")
 so_neuron_merge@meta.data$cluster_id <- Idents(so_neuron_merge)
 sce$cluster_id <- Idents(so_neuron_merge)
-(n_cells <- table(sce$cluster_id, sce$sample_id))
-write.csv(table(sce$cluster_id, sce$sample_id), "../data_tmp_h5/neuron_integrated_EC/so_neuron_merge_all-ref_MGZS_20PC_res0.4_numbers.csv")
+(n_cells <- table(sce$cluster_id, sce$dataset))
+write.csv(table(sce$cluster_id, sce$sample_id), "../Datos_scRNA/neurons_integrated/SFG/so_neuron_merge_all-ref_MGZS_20PC_res0.4_numbers.csv")
 
 nk <- length(kids <- set_names(levels(sce$cluster_id)))
-ns <- length(sids <- set_names(levels(sce$sample_id)))
+ns <- length(sids <- set_names(levels(sce$dataset)))
 ng <- length(gids <- set_names(levels(sce$group_id)))
 
 #Choose color palettes for cluster, sample, group IDs, and # cells
@@ -226,6 +226,7 @@ pal <- CATALYST:::.cluster_cols
 cluster_id_pal <- set_names(pal[seq_len(nk)], kids)
 sample_id_pal <- set_names(pal[seq_len(ns) + nk], sids)
 group_id_pal <- set_names(c("royalblue", "red"), gids)
+dataset_pal <- set_names(c("green", "red", "blue"), sids)
 
 #Generate relative cluster abundances
 fqs <- prop.table(n_cells, margin = 2)
@@ -237,7 +238,7 @@ Heatmap(mat,
         cluster_columns = FALSE,
         row_names_side = "left",
         row_title = "cluster_id",
-        column_title = "sample_id",
+        column_title = "dataset",
         column_title_side = "bottom",
         rect_gp = gpar(col = "white"),
         cell_fun = function(i, j, x, y, width, height, fill)
@@ -252,7 +253,7 @@ cs <- sample(colnames(so_neuron_merge), 5e3)
                             override.aes = list(size = 3, alpha = 1))) +
   theme_void() + theme(aspect.ratio = 1)
 
-ids <- c("cluster_id", "group_id", "sample_id")
+ids <- c("cluster_id", "group_id", "dataset")
 for (id in ids) {
   cat("## ", id, "\n")
   p1 <- .plot_dr(so_neuron_merge, "tsne", id)
@@ -271,8 +272,12 @@ reducedDim(sce, "dens-SNE") <- dt
 dm <- densmap(reducedDim(sce, "PCA"), dens_frac = 0.4, dens_lambda = 0.2)
 reducedDim(sce, "densMAP") <- dm
 
+
+saveRDS(sce, "for_Plot_SFG_preprocess.rds")
+
 library(scater)
 
+jpeg("images/neurons_SFG_clusters_Idents.jpeg", units="in", width=15, height=10, res=300)
 gridExtra::grid.arrange(
   plotReducedDim(sce, "TSNE", colour_by="ident") + ggtitle("t-SNE") +
     theme(text = element_text(size = 20)),
@@ -284,6 +289,37 @@ gridExtra::grid.arrange(
     theme(text = element_text(size = 20)),
   ncol=2
 )
+dev.off()
+
+
+jpeg("images/neurons_SFG_clusters_dataset.jpeg", units="in", width=15, height=10, res=300)
+gridExtra::grid.arrange(
+  plotReducedDim(sce, "TSNE", colour_by="dataset") + ggtitle("t-SNE") +
+    theme(text = element_text(size = 20)),
+  plotReducedDim(sce, "dens-SNE", colour_by="dataset") + ggtitle("dens-SNE")+
+    theme(text = element_text(size = 20)),
+  plotReducedDim(sce, "UMAP", colour_by="dataset") + ggtitle("UMAP") +
+    theme(text = element_text(size = 20)),
+  plotReducedDim(sce, "densMAP", colour_by="dataset") + ggtitle("densMAP") +
+    theme(text = element_text(size = 20)),
+  ncol=2
+)
+dev.off()
+
+jpeg("images/neurons_SFG_clusters_Disease.jpeg", units="in", width=15, height=10, res=300)
+gridExtra::grid.arrange(
+  plotReducedDim(sce, "TSNE", colour_by="group_id") + ggtitle("t-SNE") +
+    theme(text = element_text(size = 20)),
+  plotReducedDim(sce, "dens-SNE", colour_by="group_id") + ggtitle("dens-SNE")+
+    theme(text = element_text(size = 20)),
+  plotReducedDim(sce, "UMAP", colour_by="group_id") + ggtitle("UMAP") +
+    theme(text = element_text(size = 20)),
+  plotReducedDim(sce, "densMAP", colour_by="group_id") + ggtitle("densMAP") +
+    theme(text = element_text(size = 20)),
+  ncol=2
+)
+dev.off()
+
 
 ## Volvemos a Seurat a pasarle la informacion generada con SingleCellExperiment
 so_neuron_merge@meta.data$Proplabels <- sce$ProbLabels
@@ -328,7 +364,7 @@ library(data.table)
 library(psych)
 feature_by_sample <- as.data.frame(so_neuron_merge$nFeature_RNA, row.names = so_neuron_merge$sample_id)
 feature_by_sample_table <- describeBy(feature_by_sample, group = so_neuron_merge$sample_id, mat = TRUE)
-write.csv(feature_by_sample_table, "../Datos_scRNA/neurons_integrated/SFG/so_neuron_merge_all-ref_MGZS_20PC_res0.4_QC_feature_by_sample.csv")
+write.csv(feature_by_sample_table, "../Datos_scRNA/neurons_integrated/SFG/so_neuron_merge_SFG_all-ref_MGZS_20PC_res0.4_QC_feature_by_sample.csv")
 
 count_by_sample <- as.data.frame(so_neuron_merge$nCount_RNA, row.names = so_neuron_merge$sample_id)
 count_by_sample_table <- describeBy(count_by_sample, group = so_neuron_merge$sample_id, mat = TRUE)

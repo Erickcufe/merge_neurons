@@ -1,8 +1,9 @@
 library(Seurat)
 library(ggplot2)
 
-neurons <- readRDS("../Datos_scRNA/neurons_integrated/SFG/datos_integrados_Anotados.rds")
-DimPlot(neurons, reduction = "umap", pt.size = 0.001) + theme(aspect.ratio = 1)
+neurons <- readRDS("../Datos_scRNA/neurons_integrated/SFG/datos_integrados_sinAnotar.rds")
+DimPlot(neurons, reduction = "umap", pt.size = 0.001) + theme(aspect.ratio = 1) +
+  theme(text = element_text(size = 20))
 
 
 dummy_neuron <- neurons
@@ -46,8 +47,11 @@ so.renamed <- RenameIdents(dummy_neuron, `0` = "Ex", `1` = "Ex", `2` = "Pv",
                            `13`= "Ex", `14`= "Non-Vip", `15`= "Pv",
                            `16`= "Non-Vip", `17`= "Non-Vip", `18`= "Ex",
                            `19` = "RORB+", `20` = "Ex", `21` = "Ex")
+
+jpeg("images/neurons_EC_clusters_IILAYER_SEMINARIO.jpeg", units="in", width=15, height=10, res=300)
 DimPlot(so.renamed, reduction = "umap", pt.size = 0.001) + theme(aspect.ratio = 1) +
   theme(text = element_text(size = 20))
+dev.off()
 
 jpeg("images/neurons_EC_clusters_IILAYER_SEMINARIO.jpeg", units="in", width=15, height=10, res=300)
 FeaturePlot(dummy_neuron, features = c("GPC5", "DCC", "PRKCA", "CNTN5"), reduction = "umap",
