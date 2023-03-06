@@ -53,6 +53,8 @@ DimPlot(so.renamed, reduction = "umap", pt.size = 0.001) + theme(aspect.ratio = 
   theme(text = element_text(size = 20))
 dev.off()
 
+saveRDS(so.renamed, "../Datos_scRNA/neurons_integrated/SFG/anotation_SFG.rds")
+
 jpeg("images/neurons_EC_clusters_IILAYER_SEMINARIO.jpeg", units="in", width=15, height=10, res=300)
 FeaturePlot(dummy_neuron, features = c("GPC5", "DCC", "PRKCA", "CNTN5"), reduction = "umap",
             cols = c("#EBE6E5","#EA0C3E"), label.size = 26, pt.size = 1)

@@ -1,0 +1,79 @@
+library(Seurat)
+library(dplyr)
+library(ggplot2)
+
+so <- readRDS("anotation_SFG.rds")
+Idents(so)
+
+f.markers <- FindAllMarkers(so, min.pct = 0.25, logfc.threshold = 0.25)
+
+f.markers %>%
+  group_by(cluster) %>%
+  top_n(n = 10, wt = avg_log2FC) -> top10
+
+library(viridis)
+
+jpeg("images/markers_CellTypes.jpeg", units="in", width=15, height=10, res=300)
+DoHeatmap(so, features = top10$gene) +
+  theme(text = element_text(size = 18)) +
+  scico::scale_fill_scico(palette = "imola")
+dev.off()
+
+
+library(pathfindR)
+
+rorb.markers <- f.markers[f.markers$cluster=="RORB+",]
+rorb.markers <- data.frame(Gene.symbol = rownames(rorb.markers),
+                           logFC = rorb.markers$avg_log2FC,
+                           adj.P.Val = rorb.markers$p_val_adj)
+
+genes <- sapply(rorb.markers$Gene.symbol, FUN = function(x){
+  a <- stringr::str_split(string = x, pattern = "[.]")
+  b <- a[[1]][[1]]
+})
+rorb.markers$Gene.symbol <- genes
+
+output_rorb <- run_pathfindR(rorb.markers, output_dir = "results_pathfinder/", gene_sets = "GO-All")
+
+enrichment_chart(output_rorb)
+term_gene_heatmap(output_rorb, use_description = TRUE, num_terms = 20) +
+  theme(text = element_text(size = 20)) + NoLegend()
+
+term_gene_graph(output_rorb, use_description = TRUE, num_terms = 20)
+
+UpSet_plot(output_rorb, num_terms = 15, use_description = TRUE,
+           method = "barplot") +
+  theme(text = element_text(size = 20)) + NoLegend()
+
+library(clusterProfiler)
+library(enrichplot)
+
+library(org.Hs.eg.db)
+AnnotationDbi::keytypes(org.Hs.eg.db)
+
+tum_down  <- subset(f.markers,
+                    f.markers$avg_log2FC < -0.5
+                    & f.markers$p_val_adj < 0.05)
+rorb_down <- tum_down[tum_down$cluster=="RORB+",]
+rorb_down_genes <- rownames(rorb_down)
+
+tum_up <- subset(f.markers,
+                 f.markers$avg_log2FC > 0.5
+                 & f.markers$p_val_adj < 0.05)
+rorb_up <- tum_up[tum_up$cluster=="RORB+",]
+rorb_up_genes <- rownames(rorb_up)
+
+rorb_vs_norm_go <- clusterProfiler::enrichGO(rorb_up_genes,
+                                            "org.Hs.eg.db",
+                                            keyType = "SYMBOL",
+                                            ont = "BP",
+                                            minGSSize = 50)
+
+enr_go <- clusterProfiler::simplify(rorb_vs_norm_go)
+View(enr_go@result)
+
+enrichplot::emapplot(enrichplot::pairwise_termsim(enr_go),
+                     showCategory = 30, cex_label_category = 0.5)
+
+
+
