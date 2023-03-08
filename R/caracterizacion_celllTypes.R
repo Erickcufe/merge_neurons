@@ -51,19 +51,20 @@ library(enrichplot)
 library(org.Hs.eg.db)
 AnnotationDbi::keytypes(org.Hs.eg.db)
 
-tum_down  <- subset(f.markers,
-                    f.markers$avg_log2FC < -0.5
-                    & f.markers$p_val_adj < 0.05)
-rorb_down <- tum_down[tum_down$cluster=="RORB+",]
-rorb_down_genes <- rownames(rorb_down)
+tum_down  <- subset(rorb.markers,
+                    rorb.markers$logFC < -0.5
+                    & rorb.markers$adj.P.Val < 0.05)
+# rorb_down <- tum_down[tum_down$cluster=="RORB+",]
+rorb_down_genes <- tum_down$Gene.symbol
 
-tum_up <- subset(f.markers,
-                 f.markers$avg_log2FC > 0.5
-                 & f.markers$p_val_adj < 0.05)
-rorb_up <- tum_up[tum_up$cluster=="RORB+",]
-rorb_up_genes <- rownames(rorb_up)
+tum_up <- subset(rorb.markers,
+                 rorb.markers$logFC > 0.5
+                 & rorb.markers$adj.P.Val < 0.05)
+# rorb_up <- tum_up[tum_up$cluster=="RORB+",]
+rorb_up_genes <- tum_up$Gene.symbol
 
-rorb_vs_norm_go <- clusterProfiler::enrichGO(rorb_up_genes,
+# DOWN
+rorb_vs_norm_go <- clusterProfiler::enrichGO(rorb_down_genes,
                                             "org.Hs.eg.db",
                                             keyType = "SYMBOL",
                                             ont = "BP",
@@ -72,8 +73,24 @@ rorb_vs_norm_go <- clusterProfiler::enrichGO(rorb_up_genes,
 enr_go <- clusterProfiler::simplify(rorb_vs_norm_go)
 View(enr_go@result)
 
+jpeg("images/GO_down_RORB.jpeg", units="in", width=15, height=10, res=300)
 enrichplot::emapplot(enrichplot::pairwise_termsim(enr_go),
                      showCategory = 30, cex_label_category = 0.5)
+dev.off()
 
 
+
+# UP
+rorb_vs_norm_go_UP <- clusterProfiler::enrichGO(rorb_up_genes,
+                                             "org.Hs.eg.db",
+                                             keyType = "SYMBOL",
+                                             ont = "BP",
+                                             minGSSize = 50)
+
+enr_go_up <- clusterProfiler::simplify(rorb_vs_norm_go_UP)
+
+jpeg("images/GO_up_RORB.jpeg", units="in", width=15, height=10, res=300)
+enrichplot::emapplot(enrichplot::pairwise_termsim(enr_go_up),
+                     showCategory = 30, cex_label_category = 0.7)
+dev.off()
 
