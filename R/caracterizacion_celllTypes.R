@@ -75,7 +75,7 @@ View(enr_go@result)
 
 jpeg("images/GO_down_RORB.jpeg", units="in", width=15, height=10, res=300)
 enrichplot::emapplot(enrichplot::pairwise_termsim(enr_go),
-                     showCategory = 30, cex_label_category = 0.5)
+                     showCategory = 30, cex_label_category = 0.7)
 dev.off()
 
 
