@@ -48,6 +48,34 @@ so.renamed <- RenameIdents(dummy_neuron, `0` = "Ex", `1` = "Ex", `2` = "Pv",
                            `16`= "Non-Vip", `17`= "Non-Vip", `18`= "Ex",
                            `19` = "RORB+", `20` = "Ex", `21` = "Ex")
 
+## ANOTACION DE SUBCLUSTERS DE NEURONAS EXCITADORAS
+
+so.renamed <- RenameIdents(dummy_neuron, `0` = "Ex", `1` = "Ex", `3` = "RORB+",
+                           `9`= "Ex_other", `2` = "Pv", `4` = "Vip", `5`= "Sst",
+                           `6` = "RORB+", `7`= "RORB+", `8`= "Vip",`10`= "Non-Vip",
+                           `11`= "Ex", `12`= "Ex",
+                           `13`= "Ex_other", `14`= "Non-Vip", `15`= "Pv",
+                           `16`= "Non-Vip", `17`= "Non-Vip", `18`= "Ex_other",
+                           `19` = "RORB+", `20` = "Ex_other", `21` = "Ex_other")
+
+so.renamed$tags <- Idents(so.renamed)
+table(so.renamed$tags, so.renamed$disease)
+
+FeaturePlot(dummy_neuron, features = c("RORB"), reduction = "umap",
+            cols = c("white","#EA0C3E"), label.size = 26, pt.size = 1)
+
+f.markers <- FindAllMarkers(so.renamed, min.pct = 0.25, logfc.threshold = 0.25)
+
+f.markers %>%
+  group_by(cluster) %>%
+  top_n(n = 10, wt = avg_log2FC) -> top10
+
+jpeg("images/markers_Neurons_Types_Ex.jpeg", units="in", width=15, height=10, res=300)
+DoHeatmap(so.renamed, features = top10$gene) +
+  theme(text = element_text(size = 18)) +
+  scico::scale_fill_scico(palette = "imola")
+dev.off()
+
 jpeg("images/neurons_EC_clusters_IILAYER_SEMINARIO.jpeg", units="in", width=15, height=10, res=300)
 DimPlot(so.renamed, reduction = "umap", pt.size = 0.001) + theme(aspect.ratio = 1) +
   theme(text = element_text(size = 20))
