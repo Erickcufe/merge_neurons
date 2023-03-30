@@ -11,7 +11,7 @@ library(ggplot2)
 # so_Morabito_astro <- readRDS(file.path("../data_tmp_h5/morabito", "Morabito_so_neuron_20PC.rds"))
 so_Morabito_neuron <- readRDS(file.path("../Datos_scRNA/morabito_data", "morabito_PC21_Neuron.rds"))
 so_Leng_EC_neuron <- readRDS(file.path("../Datos_scRNA/kun_leng/SFG", "kun_leng_SFG_so_PC21_Neuron.rds"))
-so_Saddick_neuron <- readRDS(file.path("../Datos_scRNA/saddick", "saddick_PC21_Neuron.rds"))
+so_Saddick_neuron <- readRDS(file.path("../Datos_scRNA/saddick", "saddick_SFG_Neuron.rds"))
 # so_LEN_astro <- readRDS(file.path("file_path", "CR4_LEN_e23_noD5D9_so_astro_r2_20PC.rds"))
 
 #Add in metadata dataset identifiers
