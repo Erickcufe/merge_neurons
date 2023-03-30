@@ -156,20 +156,20 @@ so_neuron_merge <- ScaleData(so_neuron_merge, display.progress = FALSE)
 so_neuron_merge <- RunPCA(so_neuron_merge, npcs = 50, verbose = FALSE)
 ElbowPlot(so_neuron_merge, ndims = 50)
 
-so_neuron_merge <- RunTSNE(so_neuron_merge, reduction = "pca", dims = seq_len(16),
+so_neuron_merge <- RunTSNE(so_neuron_merge, reduction = "pca", dims = seq_len(27),
                            seed.use = 1, do.fast = TRUE, verbose = FALSE, check_duplicates = FALSE)
-so_neuron_merge <- RunUMAP(so_neuron_merge, reduction = "pca", dims = seq_len(16),
+so_neuron_merge <- RunUMAP(so_neuron_merge, reduction = "pca", dims = seq_len(27),
                            seed.use = 1, verbose = FALSE)
 
 #CLUSTERING
-so_neuron_merge <- FindNeighbors(so_neuron_merge, reduction = "pca", dims = seq_len(16), verbose = FALSE)
+so_neuron_merge <- FindNeighbors(so_neuron_merge, reduction = "pca", dims = seq_len(27), verbose = FALSE)
 for (res in c(0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1))
   so_neuron_merge <- FindClusters(so_neuron_merge, resolution = res, random.seed = 1, verbose = FALSE)
 
 
 #DR COLORED BY SAMPLE, GROUP, AND CLUSTER ID
 thm <- theme(aspect.ratio = 1, legend.position = "none")
-ps <- lapply(c("sample_id", "group_id", "ident"), function(u) {
+ps <- lapply(c("dataset", "group_id", "ident"), function(u) {
   p1 <- DimPlot(so_neuron_merge, reduction = "tsne", group.by = u) + thm
   p2 <- DimPlot(so_neuron_merge, reduction = "umap", group.by = u)
   lgd <- get_legend(p2)
@@ -178,10 +178,13 @@ ps <- lapply(c("sample_id", "group_id", "ident"), function(u) {
   plot_grid(p1, p2, lgd, nrow = 1,
             rel_widths = c(1, 1, 0.5))
 })
+
+jpeg("images/SFG_clusters_neurons.jpeg", units="in", width=10, height=10, res=300)
 plot_grid(plotlist = ps, ncol = 1)
+dev.off()
 
 #Save SeuratObject
-saveRDS(so_neuron_merge, file.path("../Datos_scRNA/neurons_integrated/SFG", "so_neuron_merge_all_ref_16PC_SFG.rds"))
+saveRDS(so_neuron_merge, file.path("../Datos_scRNA/neurons_integrated/SFG", "neurons_merge_SFG.rds"))
 
 #---------------------------------------------------------------------------------------------------
 #CLUSTER ANNOTATION
@@ -201,7 +204,7 @@ library(Seurat)
 library(SingleCellExperiment)
 
 #Load data and convert to SCE
-so_neuron_merge <- readRDS(file.path("../Datos_scRNA/neurons_integrated/SFG", "so_neuron_merge_all_ref_16PC_SFG.rds"))
+so_neuron_merge <- readRDS(file.path("../Datos_scRNA/neurons_integrated/SFG", "neurons_merge_SFG.rds"))
 sce <- as.SingleCellExperiment(so_neuron_merge, assay = "RNA")
 colData(sce) <- as.data.frame(colData(sce)) %>%
   mutate_if(is.character, as.factor) %>%
