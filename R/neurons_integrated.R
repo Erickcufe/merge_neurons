@@ -9,8 +9,8 @@ library(ggplot2)
 
 #Load SeuratObjects (as previously reanalyzed or generated)
 # so_Morabito_astro <- readRDS(file.path("../data_tmp_h5/morabito", "Morabito_so_neuron_20PC.rds"))
-so_Morabito_neuron <- readRDS(file.path("../Datos_scRNA/morabito_data", "morabito_PC21_Neuron.rds"))
-so_Leng_EC_neuron <- readRDS(file.path("../Datos_scRNA/kun_leng/SFG", "kun_leng_SFG_so_PC21_Neuron.rds"))
+so_Morabito_neuron <- readRDS(file.path("../Datos_scRNA/morabito_data", "morabito_SFG_Neuron.rds"))
+so_Leng_neuron <- readRDS(file.path("../Datos_scRNA/kun_leng/SFG", "kun_leng_SFG_Neuron.rds"))
 so_Saddick_neuron <- readRDS(file.path("../Datos_scRNA/saddick", "saddick_SFG_Neuron.rds"))
 # so_LEN_astro <- readRDS(file.path("file_path", "CR4_LEN_e23_noD5D9_so_astro_r2_20PC.rds"))
 
@@ -21,11 +21,11 @@ NewMeta_morabito <- subset(Meta_morabito, select = c("dataset"))
 so_morabito_neuron <- AddMetaData(so_Morabito_neuron, NewMeta_morabito)
 head(x = so_morabito_neuron[[]])
 
-Meta_Leng_EC <- so_Leng_EC_neuron@meta.data
+Meta_Leng_EC <- so_Leng_neuron@meta.data
 Meta_Leng_EC["dataset"] <- c("Kun_Leng")
 NewMeta_Leng_EC <- subset(Meta_Leng_EC, select = c("dataset"))
-so_Leng_EC_neuron <- AddMetaData(so_Leng_EC_neuron, NewMeta_Leng_EC)
-head(x = so_Leng_EC_neuron[[]])
+so_Leng_neuron <- AddMetaData(so_Leng_neuron, NewMeta_Leng_EC)
+head(x = so_Leng_neuron[[]])
 
 Meta_saddick <- so_Saddick_neuron@meta.data
 Meta_saddick["dataset"] <- c("Sadick")
@@ -35,12 +35,12 @@ head(x = so_Saddick_neuron[[]])
 
 
 #Merge seurat objects
-so_neuron_merge <- merge(x = so_Leng_EC_neuron, y = c(so_morabito_neuron, so_Saddick_neuron))
+so_neuron_merge <- merge(x = so_Leng_neuron, y = c(so_morabito_neuron, so_Saddick_neuron))
 
 #Remove integrated data associated with object and shift assay into RNA assay
 DefaultAssay(so_neuron_merge) <- "RNA"
 so_neuron_merge[['integrated']] <- NULL
-saveRDS(so_neuron_merge, file.path("../Datos_scRNA/neurons_integrated/SFG", "CR4_so_Neuron_merge_all_unint.rds"))
+saveRDS(so_neuron_merge, file.path("../Datos_scRNA/neurons_integrated/SFG", "SFG_so_Neuron_merge_all_unint.rds"))
 
 #---------------------------------------------------------------------------------------------------
 #CLUSTERING
@@ -56,7 +56,7 @@ library(SingleCellExperiment)
 library(ggplot2)
 
 #Load SeuratObject
-so_neuron_merge <- readRDS( file.path("../Datos_scRNA/neurons_integrated/SFG", "CR4_so_Neuron_merge_all_unint.rds"))
+so_neuron_merge <- readRDS( file.path("../Datos_scRNA/neurons_integrated/SFG", "SFG_so_Neuron_merge_all_unint.rds")))
 
 #Prepare SCE object from merged object
 sce <- as.SingleCellExperiment(so_neuron_merge, assay = "RNA")
