@@ -56,7 +56,7 @@ library(SingleCellExperiment)
 library(ggplot2)
 
 #Load SeuratObject
-so_neuron_merge <- readRDS( file.path("../Datos_scRNA/neurons_integrated/SFG", "SFG_so_Neuron_merge_all_unint.rds")))
+so_neuron_merge <- readRDS( file.path("../Datos_scRNA/neurons_integrated/SFG", "SFG_so_Neuron_merge_all_unint.rds"))
 
 #Prepare SCE object from merged object
 sce <- as.SingleCellExperiment(so_neuron_merge, assay = "RNA")
