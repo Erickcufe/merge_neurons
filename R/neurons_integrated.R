@@ -214,7 +214,7 @@ colData(sce) <- as.data.frame(colData(sce)) %>%
 cluster_cols <- grep("res.[0-9]", colnames(colData(sce)), value = TRUE)
 sapply(colData(sce)[cluster_cols], nlevels)
 
-so_neuron_merge <- SetIdent(so_neuron_merge, value = "integrated_snn_res.0.4")
+so_neuron_merge <- SetIdent(so_neuron_merge, value = "integrated_snn_res.0.2")
 so_neuron_merge@meta.data$cluster_id <- Idents(so_neuron_merge)
 sce$cluster_id <- Idents(so_neuron_merge)
 (n_cells <- table(sce$cluster_id, sce$dataset))
@@ -276,19 +276,19 @@ dm <- densmap(reducedDim(sce, "PCA"), dens_frac = 0.4, dens_lambda = 0.2)
 reducedDim(sce, "densMAP") <- dm
 
 
-saveRDS(sce, "for_Plot_SFG_preprocess.rds")
+saveRDS(sce, file.path("../Datos_scRNA/neurons_integrated/SFG", "for_Plot_SFG_preprocess.rds"))
 
 library(scater)
 
-jpeg("images/neurons_SFG_clusters_Idents.jpeg", units="in", width=15, height=10, res=300)
+jpeg("images/neurons_SFG_clusters_Clusters.jpeg", units="in", width=15, height=10, res=300)
 gridExtra::grid.arrange(
-  plotReducedDim(sce, "TSNE", colour_by="ident") + ggtitle("t-SNE") +
+  plotReducedDim(sce, "TSNE", colour_by="cluster_id") + ggtitle("t-SNE") +
     theme(text = element_text(size = 20)),
-  plotReducedDim(sce, "dens-SNE", colour_by="ident") + ggtitle("dens-SNE")+
+  plotReducedDim(sce, "dens-SNE", colour_by="cluster_id") + ggtitle("dens-SNE")+
     theme(text = element_text(size = 20)),
-  plotReducedDim(sce, "UMAP", colour_by="ident") + ggtitle("UMAP") +
+  plotReducedDim(sce, "UMAP", colour_by="cluster_id") + ggtitle("UMAP") +
     theme(text = element_text(size = 20)),
-  plotReducedDim(sce, "densMAP", colour_by="ident") + ggtitle("densMAP") +
+  plotReducedDim(sce, "densMAP", colour_by="cluster_id") + ggtitle("densMAP") +
     theme(text = element_text(size = 20)),
   ncol=2
 )
@@ -297,13 +297,13 @@ dev.off()
 
 jpeg("images/neurons_SFG_clusters_dataset.jpeg", units="in", width=15, height=10, res=300)
 gridExtra::grid.arrange(
-  plotReducedDim(sce, "TSNE", colour_by="dataset") + ggtitle("t-SNE") +
+  plotReducedDim(sce, "TSNE", colour_by="dataset", point_alpha = 0.2) + ggtitle("t-SNE") +
     theme(text = element_text(size = 20)),
-  plotReducedDim(sce, "dens-SNE", colour_by="dataset") + ggtitle("dens-SNE")+
+  plotReducedDim(sce, "dens-SNE", colour_by="dataset", point_alpha = 0.2) + ggtitle("dens-SNE")+
     theme(text = element_text(size = 20)),
-  plotReducedDim(sce, "UMAP", colour_by="dataset") + ggtitle("UMAP") +
+  plotReducedDim(sce, "UMAP", colour_by="dataset", point_alpha = 0.2) + ggtitle("UMAP") +
     theme(text = element_text(size = 20)),
-  plotReducedDim(sce, "densMAP", colour_by="dataset") + ggtitle("densMAP") +
+  plotReducedDim(sce, "densMAP", colour_by="dataset", point_alpha = 0.2) + ggtitle("densMAP") +
     theme(text = element_text(size = 20)),
   ncol=2
 )
@@ -311,13 +311,13 @@ dev.off()
 
 jpeg("images/neurons_SFG_clusters_Disease.jpeg", units="in", width=15, height=10, res=300)
 gridExtra::grid.arrange(
-  plotReducedDim(sce, "TSNE", colour_by="group_id") + ggtitle("t-SNE") +
+  plotReducedDim(sce, "TSNE", colour_by="group_id", point_alpha = 0.4) + ggtitle("t-SNE") +
     theme(text = element_text(size = 20)),
-  plotReducedDim(sce, "dens-SNE", colour_by="group_id") + ggtitle("dens-SNE")+
+  plotReducedDim(sce, "dens-SNE", colour_by="group_id", point_alpha = 0.4) + ggtitle("dens-SNE")+
     theme(text = element_text(size = 20)),
-  plotReducedDim(sce, "UMAP", colour_by="group_id") + ggtitle("UMAP") +
+  plotReducedDim(sce, "UMAP", colour_by="group_id", point_alpha = 0.4) + ggtitle("UMAP") +
     theme(text = element_text(size = 20)),
-  plotReducedDim(sce, "densMAP", colour_by="group_id") + ggtitle("densMAP") +
+  plotReducedDim(sce, "densMAP", colour_by="group_id", point_alpha = 0.4) + ggtitle("densMAP") +
     theme(text = element_text(size = 20)),
   ncol=2
 )
@@ -396,9 +396,16 @@ write.csv(so_neuron_merge.markers, "../Datos_scRNA/neurons_integrated/SFG/so_neu
 
 saveRDS(so_neuron_merge, "../Datos_scRNA/neurons_integrated/SFG/datos_integrados_sinAnotar.rds")
 
-jpeg("images/neurons_EC_clusters_DATASETS_dens_map_markers.jpeg", units="in", width=15, height=10, res=300)
+jpeg("images/neurons_SFG_clusters_DATASETS_umap_markers.jpeg", units="in", width=15, height=10, res=300)
 
-DimPlot(so_neuron_merge, reduction = "dens_map", group.by = "dataset", pt.size = 0.001, cols = rev(inauguration("inauguration_2021", 4))) +
+DimPlot(so_neuron_merge, reduction = "umap", group.by = "dataset", pt.size = 0.001, cols = rev(inauguration("inauguration_2021", 4))) +
+  theme(aspect.ratio = 1, text = element_text(size = 20))
+
+dev.off()
+
+jpeg("images/neurons_SFG_clustersids_umap.jpeg", units="in", width=15, height=10, res=300)
+
+DimPlot(so_neuron_merge, reduction = "umap", group.by = "cluster_id", pt.size = 0.001) +
   theme(aspect.ratio = 1, text = element_text(size = 20))
 
 dev.off()
@@ -433,7 +440,7 @@ VIP_neurons <- c("GAD", "VGLUT1", "VIP", "SOX6", "LHX6", "TAC3", "ADARB2", "PROX
 vip <- c("VIP", "PROX1", "ADARB2", "GAD1")
 
 jpeg("images/neurons_SFG_clusters_VIP_markers.jpeg", units="in", width=15, height=10, res=300)
-FeaturePlot(so_neuron_merge, features = vip, reduction = "dens_map",
+FeaturePlot(so_neuron_merge, features = vip, reduction = "umap",
             cols = c("#EBE6E5","#EA0C3E"), label.size = 20)
 dev.off()
 
@@ -441,9 +448,16 @@ dev.off()
 pvalb <- c("PVALB", "SST", "VIP", "RELN", "NXPH1", "GAD1","ERBB4","SOX6","ADARB2")
 
 jpeg("images/neurons_SFG_clusters_VIP_sst_PV_markers.jpeg", units="in", width=15, height=10, res=300)
-FeaturePlot(so_neuron_merge, features = pvalb, reduction = "dens_map",
-            cols = c("#EBE6E5","#EA0C3E"), label.size = 26, pt.size = 1)
+FeaturePlot(so_neuron_merge, features = pvalb, reduction = "umap",
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 26, pt.size = 0.8)
 dev.off()
+
+ex_markers <- c("SLC17A7",  "SLC17A6", "CAMK2A", "RBFOX3", "RORB", "ETNPPL", "TBR1", "BCL11B")
+
+FeaturePlot(so_neuron_merge, features = ex_markers, reduction = "umap",
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 26, pt.size = 0.8)
+
+layer_2.3 <- c("RORB", "CUX1", "CUX2", "SATB2", "LMO4")
 
 so.renamed <- RenameIdents(so_neuron_merge, `0` = "Ex", `1` = "Ex", `2` = "Pv",
                            `3` = "Ex", `4` = "Vip", `5`= "Sst",
