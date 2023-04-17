@@ -214,7 +214,7 @@ colData(sce) <- as.data.frame(colData(sce)) %>%
 cluster_cols <- grep("res.[0-9]", colnames(colData(sce)), value = TRUE)
 sapply(colData(sce)[cluster_cols], nlevels)
 
-so_neuron_merge <- SetIdent(so_neuron_merge, value = "integrated_snn_res.0.2")
+so_neuron_merge <- SetIdent(so_neuron_merge, value = "integrated_snn_res.0.6")
 so_neuron_merge@meta.data$cluster_id <- Idents(so_neuron_merge)
 sce$cluster_id <- Idents(so_neuron_merge)
 (n_cells <- table(sce$cluster_id, sce$dataset))
@@ -396,12 +396,21 @@ write.csv(so_neuron_merge.markers, "../Datos_scRNA/neurons_integrated/SFG/so_neu
 
 saveRDS(so_neuron_merge, "../Datos_scRNA/neurons_integrated/SFG/datos_integrados_sinAnotar.rds")
 
+so_neuron_merge <- readRDS("../Datos_scRNA/neurons_integrated/SFG/datos_integrados_sinAnotar.rds")
+
 jpeg("images/neurons_SFG_clusters_DATASETS_umap_markers.jpeg", units="in", width=15, height=10, res=300)
 
 DimPlot(so_neuron_merge, reduction = "umap", group.by = "dataset", pt.size = 0.001, cols = rev(inauguration("inauguration_2021", 4))) +
   theme(aspect.ratio = 1, text = element_text(size = 20))
 
 dev.off()
+
+#Define resolution
+cluster_cols <- grep("res.[0-9]", colnames(colData(sce)), value = TRUE)
+sapply(colData(sce)[cluster_cols], nlevels)
+
+so_neuron_merge <- SetIdent(so_neuron_merge, value = "integrated_snn_res.0.6")
+so_neuron_merge@meta.data$cluster_id <- Idents(so_neuron_merge)
 
 jpeg("images/neurons_SFG_clustersids_umap.jpeg", units="in", width=15, height=10, res=300)
 
@@ -459,18 +468,42 @@ FeaturePlot(so_neuron_merge, features = ex_markers, reduction = "umap",
 
 layer_2.3 <- c("RORB", "CUX1", "CUX2", "SATB2", "LMO4")
 
-so.renamed <- RenameIdents(so_neuron_merge, `0` = "Ex", `1` = "Ex", `2` = "Pv",
-                           `3` = "Ex", `4` = "Vip", `5`= "Sst",
-                           `6` = "Ex", `7`= "Ex", `8`= "Vip", `9`= "Ex",
-                           `10`= "Non-Vip", `11`= "Ex", `12`= "Ex",
-                           `13`= "Ex", `14`= "Non-Vip", `15`= "Pv",
-                           `16`= "Non-Vip", `17`= "Non-Vip", `18`= "Ex",
-                           `19` = "Ex", `20` = "Ex", `21` = "Ex")
+FeaturePlot(so_neuron_merge, features = layer_2.3, reduction = "umap",
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 26, pt.size = 0.8)
 
-saveRDS(so.renamed, "../Datos_scRNA/neurons_integrated/SFG/datos_integrados_Anotados.rds")
+layer_4 <- c("RORB", "SCNN1A", "CADM1", "METRN")
+FeaturePlot(so_neuron_merge, features = layer_4, reduction = "umap",
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 26, pt.size = 0.8)
 
-jpeg("images/neurons_SFG_clusters_anotados_dens_map.jpeg", units="in", width=15, height=10, res=300)
-DimPlot(so.renamed,reduction = "dens_map", cols = usecol("pal_unikn_pair", 5), label.size = 26, pt.size = 1)
+layer_5 <- c("ETNPPL", "FEZF2", "SOX5", "BCL11B", "TLE4", "IRX5")
+FeaturePlot(so_neuron_merge, features = layer_5, reduction = "umap",
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 26, pt.size = 0.8)
+
+layer_6 <- c("BCL11A", "FOXP2", "CNTNAP4", "TLE4", "LPL")
+FeaturePlot(so_neuron_merge, features = layer_6, reduction = "umap",
+            cols = c("#EBE6E5","#EA0C3E"), label.size = 26, pt.size = 0.8)
+
+so.renamed <- RenameIdents(so_neuron_merge, `0` = "Ex", `1` = "Pv", `2` = "Ex",
+                           `3` = "Ex", `4` = "RORB+_1", `6` = "RORB+_2", `24`="RORB+_3", `5`= "Vip",
+                           `7`= "RORB+_2", `8`= "Ex", `9`= "Sst",
+                           `10`= "Ex", `11`= "Ex", `12`= "Non_Vip",
+                           `13`= "Non_Vip", `14`= "Vip", `15`= "Pv",
+                             `16` = "Vip", `17`="RORB+_3", `18`="Sst", `19`="RORB+_2",
+                           `20`="Ex", `21`="Non_Vip", `22`="Non_Vip", `23`="Ex",
+                           `25`="Ex", `26`="Ex", `27`="Ex")
+
+which(so.renamed$dataset == "Morabito")
+so.renamed$disease[which(so.renamed$dataset == "Morabito")] <- so.renamed$group_id[which(so.renamed$dataset == "Morabito")]
+table(so.renamed$disease, Idents(so.renamed))
+table(so_neuron_merge$disease, Idents(so_neuron_merge))
+table(so.renamed$dataset, Idents(so.renamed), so.renamed$disease)
+table(so.renamed$dataset, so.renamed$disease)
+
+saveRDS(so.renamed, "../Datos_scRNA/neurons_integrated/SFG/SFG_datos_integrados_Anotados.rds")
+
+
+jpeg("images/neurons_SFG_clusters_anotados_umap.jpeg", units="in", width=15, height=10, res=300)
+DimPlot(so.renamed,reduction = "umap", cols = usecol("pal_unikn_pair", 9), label.size = 26, pt.size = 1)
 dev.off()
 
 jpeg("images/neurons_SFG_clusters_anotados_dens_sne.jpeg", units="in", width=15, height=10, res=300)

@@ -20,6 +20,20 @@ DoHeatmap(so, features = top10$gene) +
 dev.off()
 
 
+so_neuron_merge <- ScaleData(so_neuron_merge)
+f.markers <- FindAllMarkers(so_neuron_merge_copy, min.pct = 0.25, logfc.threshold = 0.25)
+# clusters_markers <- read.csv("../Datos_scRNA/neurons_integrated/SFG/so_neuron_merge_all-ref_MGZS_20PC_res0.4_genes-RNA.csv")
+f.markers %>%
+  group_by(cluster) %>%
+  top_n(n = 10, wt = avg_log2FC) -> top10
+
+jpeg("images/SFG_markers_Clusters.jpeg", units="in", width=25, height=17, res=300)
+DoHeatmap(so_neuron_merge, features = top10$gene) +
+  theme(text = element_text(size = 18)) +
+  scico::scale_fill_scico(palette = "imola")
+dev.off()
+
+
 library(pathfindR)
 
 rorb.markers <- f.markers[f.markers$cluster=="RORB+",]
