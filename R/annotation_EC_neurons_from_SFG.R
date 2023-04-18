@@ -20,7 +20,7 @@ library(SingleR)
 
 pred <- SingleR(test = sce, ref = sce_sfg,
                 labels = colData(sce_sfg)$ident, assay.type.test=1,
-                BPPARAM= BiocParallel::MulticoreParam(6)) # 8 CPUs.
+                BPPARAM= BiocParallel::MulticoreParam(5)) # 8 CPUs.
 pred_modf <- pred[!duplicated(row.names(pred)),]
 colData(sce)$ProbLabels <- pred$labels
 jpeg("images/plotScore_annotated_EC_from_SFG.jpeg", units="in", width=10, height=10, res=300)
