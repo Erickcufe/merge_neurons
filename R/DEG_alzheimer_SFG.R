@@ -28,6 +28,19 @@ f.markers_RORB$gene <- rownames(f.markers_RORB)
 readr::write_csv(f.markers_RORB, "gene_markers_per_markers_RORB.csv")
 
 
+f.markers_Ex1 <- FindMarkers(so.renamed,
+                              ident.1 = "AD_Ex_1",
+                              ident.2 = "Control_Ex_1",
+                              min.cells.group = 1,
+                              min.cells.feature = 1,
+                              min.pct = 0,
+                              logfc.threshold = 0,
+                              only.pos = FALSE)
+
+
+f.markers_Ex1$gene <- rownames(f.markers_Ex1)
+readr::write_csv(f.markers_Ex1, "gene_markers_per_markers_Ex1.csv")
+
 rorb_grpah <- readr::read_csv("../GRN_atac/Nets/Graph_rorb_PAPER_uniques.csv")
 
 
