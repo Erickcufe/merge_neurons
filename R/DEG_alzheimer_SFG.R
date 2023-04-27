@@ -41,9 +41,37 @@ f.markers_Ex1 <- FindMarkers(so.renamed,
 f.markers_Ex1$gene <- rownames(f.markers_Ex1)
 readr::write_csv(f.markers_Ex1, "gene_markers_per_markers_Ex1.csv")
 
+f.markers_Vip <- FindMarkers(so.renamed,
+                             ident.1 = "AD_Vip",
+                             ident.2 = "Control_Vip",
+                             min.cells.group = 1,
+                             min.cells.feature = 1,
+                             min.pct = 0,
+                             logfc.threshold = 0,
+                             only.pos = FALSE)
+
+
+f.markers_Vip$gene <- rownames(f.markers_Vip)
+readr::write_csv(f.markers_Vip, "gene_markers_per_markers_Vip.csv")
+# high <- f.markers_Vip %>% filter(avg_log2FC > 0.5) %>%
+#   filter(p_val_adj <= 0.001)
+
+f.markers_Pv <- FindMarkers(so.renamed,
+                             ident.1 = "AD_Pv",
+                             ident.2 = "Control_Pv",
+                             min.cells.group = 1,
+                             min.cells.feature = 1,
+                             min.pct = 0,
+                             logfc.threshold = 0,
+                             only.pos = FALSE)
+
+
+f.markers_Pv$gene <- rownames(f.markers_Pv)
+readr::write_csv(f.markers_Pv, "gene_markers_per_markers_Pv.csv")
+
 rorb_grpah <- readr::read_csv("../GRN_atac/Nets/Graph_rorb_PAPER_uniques.csv")
 
-
+markers <- FindMarkers(so.renamed, ident.1 = "g1", group.by = 'group_id', subset.ident = "2")
 
 library(dplyr)
 library(ggplot2)
