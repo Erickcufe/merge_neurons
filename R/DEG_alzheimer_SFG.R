@@ -82,6 +82,19 @@ f.markers_Ex2 <- FindMarkers(so.renamed,
 f.markers_Ex2$gene <- rownames(f.markers_Ex2)
 readr::write_csv(f.markers_Ex2, "gene_markers_per_markers_Ex2.csv")
 
+f.markers_Non_Vip <- FindMarkers(so.renamed,
+                             ident.1 = "AD_Non-Vip",
+                             ident.2 = "Control_Non-Vip",
+                             min.cells.group = 1,
+                             min.cells.feature = 1,
+                             min.pct = 0,
+                             logfc.threshold = 0,
+                             only.pos = FALSE)
+
+
+f.markers_Non_Vip$gene <- rownames(f.markers_Non_Vip)
+readr::write_csv(f.markers_Non_Vip, "gene_markers_per_markers_Non_Vip.csv")
+
 rorb_grpah <- readr::read_csv("../GRN_atac/Nets/Graph_rorb_PAPER_uniques.csv")
 
 markers <- FindMarkers(so.renamed, ident.1 = "g1", group.by = 'group_id', subset.ident = "2")
