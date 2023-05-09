@@ -162,6 +162,31 @@ input_pathfinder <- data.frame(Gene.symbol = f.markers_RORB$gene, logFC = f.mark
 library(pathfindR)
 output_rorb <- run_pathfindR(input_pathfinder, output_dir = "results_pathfinder/", gene_sets = "GO-All")
 
+saveRDS(output_rorb, "results_pathfinder/output_rorb.rds")
+
+jpeg("images/enrichChart_RORB_ADvsCt.jpeg", units="in", width=15, height=10, res=300)
+enrichment_chart(output_rorb, top_terms = 20) +
+  theme(text = element_text(size = 25),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20))
+dev.off()
+
+# term_gene_heatmap(output_rorb, use_description = TRUE, num_terms = 5) +
+#   theme(text = element_text(size = 20))
+
+jpeg("images/UpSet_RORB_ADvsCt.jpeg", units="in", width=15, height=10, res=300)
+UpSet_plot(output_rorb, num_terms = 10, use_description = TRUE,
+           method = "barplot") +
+  theme(text = element_text(size = 20),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20))
+dev.off()
+
+visualize_terms(
+  result_df = example_pathfindR_output,
+  input_processed = input_processed,
+  hsa_KEGG = TRUE
+)
 
 #
 #
