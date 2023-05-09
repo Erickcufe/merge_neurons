@@ -99,24 +99,34 @@ rorb_grpah <- readr::read_csv("../GRN_atac/Nets/Graph_rorb_PAPER_uniques.csv")
 
 markers <- FindMarkers(so.renamed, ident.1 = "g1", group.by = 'group_id', subset.ident = "2")
 
+
+
+## Grafica DEG para las células RORB+
+
+f.markers_RORB <- readr::read_csv("gene_markers_per_markers_RORB.csv")
 library(dplyr)
 library(ggplot2)
+
+f.markers_RORB <- f.markers_RORB[!stringr::str_detect(f.markers_RORB$gene, "MT"),]
+
 
 high <- f.markers_RORB %>% filter(avg_log2FC > 0.5) %>%
   filter(p_val_adj <= 0.001)
 
+high <- high[!stringr::str_detect(high$gene, "MT"),] %>% head(15)
+
 low <- f.markers_RORB %>% filter(avg_log2FC < -0.5) %>%
   filter(p_val_adj <= 0.001)
 
-low <- low[!stringr::str_detect(low$gene, "MT"),]
+low <- low[!stringr::str_detect(low$gene, "MT"),] %>% head(15)
 
-rorb_tg <- rorb_grpah[rorb_grpah$TG %in% low$gene,]
-rorb_tf <- rorb_grpah[rorb_grpah$TF %in% low$gene,]
+# rorb_tg <- rorb_grpah[rorb_grpah$TG %in% low$gene,]
+# rorb_tf <- rorb_grpah[rorb_grpah$TF %in% low$gene,]
 
 
 # saveRDS(prueba, "resultados/DE_Ex_SFG_ctrl_AD.rds")
 
-jpeg("images/EX_neurons_SFG_DE_ct_AD.jpeg", units="in", width=15, height=10, res=300)
+jpeg("images/DEG_RORB_AD_ct.jpeg", units="in", width=15, height=10, res=300)
 
 ggplot(f.markers_RORB) +
   geom_point(aes(x = avg_log2FC, y = -log10(p_val_adj)),
@@ -139,10 +149,20 @@ ggplot(f.markers_RORB) +
   ggrepel::geom_text_repel(data = low, aes(x = avg_log2FC, y = -log10(p_val_adj)), label = low$gene,
                            color = "black", size = 5,  max.overlaps = 158) +
   theme(text = element_text(size = 22)) +
-  ylab("-Log10(FDR)") + xlab("LogFC") +
-  coord_flip()
+  ylab("-Log10(FDR)") + xlab("LogFC")
 
 dev.off()
+
+
+# Enrich plots
+
+input_pathfinder <- data.frame(Gene.symbol = f.markers_RORB$gene, logFC = f.markers_RORB$avg_log2FC,
+                               adj.P.Val = f.markers_RORB$p_val_adj)
+
+library(pathfindR)
+output_rorb <- run_pathfindR(input_pathfinder, output_dir = "results_pathfinder/", gene_sets = "GO-All")
+
+
 #
 #
 #
