@@ -242,6 +242,8 @@ get_pathfinder <- function(path="KEGG"){
 
 
 get_pathfinder()
+get_pathfinder(path = "Reactome")
+get_pathfinder(path = "GO-All")
 
 #
 #
