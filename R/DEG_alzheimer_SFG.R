@@ -188,6 +188,61 @@ visualize_terms(
   hsa_KEGG = TRUE
 )
 
+
+get_pathfinder <- function(path="KEGG"){
+  suppressMessages(library(pathfindR))
+
+  output_1 <- list()
+
+  for(i in list.files("to_analyse/")){
+    cell_type <- i
+
+    f.markers <- readr::read_csv(paste0("to_analyse/",i))
+    markers_ex1 <- data.frame(Gene.symbol = f.markers$gene,
+                              logFC = f.markers$avg_log2FC,
+                              adj.P.Val = f.markers$p_val_adj)
+
+    dir_path <- paste0("results_pathfinder","_", cell_type, "_",path)
+    output_ <- run_pathfindR(markers_ex1, output_dir = dir_path, gene_sets = path)
+
+    name_enrichment_chart <- paste0("images/", cell_type, "_","enrichment_chart.jpeg")
+    jpeg(name_enrichment_chart, units="in", width=25, height=17, res=300)
+    print(enrichment_chart(output_) +
+            theme(text = element_text(size = 25),
+                  axis.text.x = element_text(size = 20),
+                  axis.text.y = element_text(size = 20)))
+    dev.off()
+
+    name_term_gene_heatmap <- paste0("images/", cell_type, "_","gene_heatmap.jpeg")
+    jpeg(name_term_gene_heatmap, units="in", width=25, height=17, res=300)
+    print(term_gene_heatmap(output_, use_description = TRUE, num_terms = 10) +
+            theme(text = element_text(size = 20)))
+    dev.off()
+
+    name_term_gene_graph <- paste0("images/", cell_type, "_","gene_graph.jpeg")
+    jpeg(name_term_gene_graph, units="in", width=25, height=17, res=300)
+    print(term_gene_graph(output_, use_description = TRUE, num_terms = 10) +
+            theme(text = element_text(size = 20)))
+    dev.off()
+
+    name_UpSet_plot <- paste0("images/", cell_type, "_","UpSet_plot.jpeg")
+    jpeg(name_UpSet_plot, units="in", width=25, height=17, res=300)
+    print(UpSet_plot(output_, num_terms = 10, use_description = TRUE,
+                     method = "barplot") +
+            theme(text = element_text(size = 20),
+                  axis.text.x = element_text(size = 20),
+                  axis.text.y = element_text(size = 20)))
+    dev.off()
+  }
+
+
+
+  return(output_)
+}
+
+
+get_pathfinder()
+
 #
 #
 #
