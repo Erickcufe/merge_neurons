@@ -205,9 +205,11 @@ get_pathfinder <- function(path="KEGG"){
     dir_path <- paste0("results_pathfinder","_", cell_type, "_",path)
     output_ <- run_pathfindR(markers_ex1, output_dir = dir_path, gene_sets = path)
 
+    saveRDS(output_, paste0(cell_type, "_", path, ".rds"))
+
     name_enrichment_chart <- paste0("images/", cell_type, "_","enrichment_chart.jpeg")
     jpeg(name_enrichment_chart, units="in", width=25, height=17, res=300)
-    print(enrichment_chart(output_) +
+    print(enrichment_chart(output_, top_terms = 15) +
             theme(text = element_text(size = 25),
                   axis.text.x = element_text(size = 20),
                   axis.text.y = element_text(size = 20)))
@@ -215,13 +217,13 @@ get_pathfinder <- function(path="KEGG"){
 
     name_term_gene_heatmap <- paste0("images/", cell_type, "_","gene_heatmap.jpeg")
     jpeg(name_term_gene_heatmap, units="in", width=25, height=17, res=300)
-    print(term_gene_heatmap(output_, use_description = TRUE, num_terms = 10) +
+    print(term_gene_heatmap(output_, use_description = TRUE, num_terms = 15) +
             theme(text = element_text(size = 20)))
     dev.off()
 
     name_term_gene_graph <- paste0("images/", cell_type, "_","gene_graph.jpeg")
     jpeg(name_term_gene_graph, units="in", width=25, height=17, res=300)
-    print(term_gene_graph(output_, use_description = TRUE, num_terms = 10) +
+    print(term_gene_graph(output_, use_description = TRUE, num_terms = 15) +
             theme(text = element_text(size = 20)))
     dev.off()
 
