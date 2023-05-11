@@ -191,6 +191,7 @@ visualize_terms(
 
 get_pathfinder <- function(path="KEGG"){
   suppressMessages(library(pathfindR))
+  suppressMessages(library(ggplot2))
 
   output_1 <- list()
 
