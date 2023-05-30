@@ -95,6 +95,64 @@ f.markers_Non_Vip <- FindMarkers(so.renamed,
 f.markers_Non_Vip$gene <- rownames(f.markers_Non_Vip)
 readr::write_csv(f.markers_Non_Vip, "gene_markers_per_markers_Non_Vip.csv")
 
+## Sst
+f.markers_Non_Vip <- FindMarkers(so.renamed,
+                                 ident.1 = "AD_Sst",
+                                 ident.2 = "Control_Sst",
+                                 min.cells.group = 1,
+                                 min.cells.feature = 1,
+                                 min.pct = 0,
+                                 logfc.threshold = 0,
+                                 only.pos = FALSE)
+
+
+f.markers_Non_Vip$gene <- rownames(f.markers_Non_Vip)
+readr::write_csv(f.markers_Non_Vip, "gene_markers_per_markers_Sst.csv")
+
+
+## Ex_3
+f.markers_Non_Vip <- FindMarkers(so.renamed,
+                                 ident.1 = "AD_Ex_3",
+                                 ident.2 = "Control_Ex_3",
+                                 min.cells.group = 1,
+                                 min.cells.feature = 1,
+                                 min.pct = 0,
+                                 logfc.threshold = 0,
+                                 only.pos = FALSE)
+
+
+f.markers_Non_Vip$gene <- rownames(f.markers_Non_Vip)
+readr::write_csv(f.markers_Non_Vip, "gene_markers_per_markers_Ex_3.csv")
+
+
+## Ex_4
+f.markers_Non_Vip <- FindMarkers(so.renamed,
+                                 ident.1 = "AD_Ex_4",
+                                 ident.2 = "Control_Ex_4",
+                                 min.cells.group = 1,
+                                 min.cells.feature = 1,
+                                 min.pct = 0,
+                                 logfc.threshold = 0,
+                                 only.pos = FALSE)
+
+
+f.markers_Non_Vip$gene <- rownames(f.markers_Non_Vip)
+readr::write_csv(f.markers_Non_Vip, "gene_markers_per_markers_Ex_4.csv")
+
+## Ex_5
+f.markers_Non_Vip <- FindMarkers(so.renamed,
+                                 ident.1 = "AD_Ex_5",
+                                 ident.2 = "Control_Ex_5",
+                                 min.cells.group = 1,
+                                 min.cells.feature = 1,
+                                 min.pct = 0,
+                                 logfc.threshold = 0,
+                                 only.pos = FALSE)
+
+
+f.markers_Non_Vip$gene <- rownames(f.markers_Non_Vip)
+readr::write_csv(f.markers_Non_Vip, "gene_markers_per_markers_Ex_5.csv")
+
 rorb_grpah <- readr::read_csv("../GRN_atac/Nets/Graph_rorb_PAPER_uniques.csv")
 
 markers <- FindMarkers(so.renamed, ident.1 = "g1", group.by = 'group_id', subset.ident = "2")
