@@ -154,4 +154,4 @@ f.markers_Non_Vip$gene <- rownames(f.markers_Non_Vip)
 readr::write_csv(f.markers_Non_Vip, "EC_DEG/gene_markers_per_markers_Ex_5.csv")
 
 
-saveRDS(so_neuron_merge, "EC_neurons_annoted_from_SFG.rds")
+
