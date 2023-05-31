@@ -448,4 +448,48 @@ get_pathfinder(path = "GO-All")
 #   coord_flip()
 #
 # dev.off()
-#
+
+
+##################### DEG per celltype
+
+ex1 <- readr::read_csv("to_analyse/gene_markers_per_markers_Ex1.csv")
+ex1$cluster <- "ex1"
+ex2 <- readr::read_csv("to_analyse/gene_markers_per_markers_Ex2.csv")
+ex2$cluster <- "ex2"
+ex3 <- readr::read_csv("to_analyse/gene_markers_per_markers_Ex_3.csv")
+ex3$cluster <- "ex3"
+
+ex4 <- readr::read_csv("to_analyse/gene_markers_per_markers_Ex_4.csv")
+ex4$cluster <- "ex4"
+
+ex5 <- readr::read_csv("to_analyse/gene_markers_per_markers_Ex_5.csv")
+ex5$cluster <- "ex5"
+
+vip <- readr::read_csv("to_analyse/gene_markers_per_markers_Vip.csv")
+vip$cluster <- "vip"
+
+nonvip <- readr::read_csv("to_analyse/gene_markers_per_markers_Non_Vip.csv")
+nonvip$cluster <- "nonvip"
+
+sst <- readr::read_csv("to_analyse/gene_markers_per_markers_Sst.csv")
+sst$cluster <- "sst"
+
+pv <- readr::read_csv("to_analyse/gene_markers_per_markers_Pv.csv")
+pv$cluster <- "pv"
+
+rorb <- readr::read_csv("to_analyse/gene_markers_per_markers_RORB.csv")
+rorb$cluster <- "rorb"
+
+
+all_up <- rbind(ex1, ex2, ex3, ex4, ex5, vip, nonvip, sst, pv, rorb) %>%
+  filter(p_val_adj<= 0.05) %>% filter(avg_log2FC >= 0.5)
+
+all_down <- rbind(ex1, ex2, ex3, ex4, ex5, vip, nonvip, sst, pv, rorb) %>%
+  filter(p_val_adj<= 0.05) %>% filter(avg_log2FC <= -0.5)
+
+table(all_down$cluster)
+table(all_up$cluster)
+
+readr::write_csv(all_up, "DEG_up_ADvsCt_perCelltype.csv")
+
+readr::write_csv(all_down, "DEG_down_ADvsCt_perCelltype.csv")
