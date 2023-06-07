@@ -560,3 +560,32 @@ get_pathfinder <- function(f.markers){
 
 get_pathfinder(rorb)
 
+
+library(ggplot2)
+
+so.renamed <- ScaleData(so.renamed)
+# Single cell heatmap of feature expression
+DoHeatmap(subset(so.renamed), features = c("SYN1", "STX1A", "STX1B", "CPLX1", "DLG4", "PPFIA3"),
+          size = 3,group.by = "ident")
+
+# Plot single genes
+
+# Ridge plots - from ggridges. Visualize single cell expression distributions in each cluster
+RidgePlot(so.renamed, features = c("SYN1", "STX1A", "STX1B", "CPLX1", "DLG4", "PPFIA3"),
+          idents = c("RORB"), group.by = "group_id") +
+  theme(text = element_text(size = 25))
+
+RidgePlot(so.renamed, features = c("PPFIA3"),
+          idents = c("RORB"), group.by = "group_id") +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 25)) +
+  labs(x = NULL, y = NULL, color = NULL, alt_insight = NULL)
+
+
+# Violin plot - Visualize single cell expression distributions in each cluster
+VlnPlot(so.renamed, features = "SYN1")
+
+# Dot plots - the size of the dot corresponds to the percentage of cells expressing the
+# feature in each cluster. The color represents the average expression level
+DotPlot(so.renamed, features = c("SYN1", "STX1A", "STX1B", "CPLX1", "DLG4"),
+        idents = c("Ex_1", "Ex_2", "Ex_3", "Ex_4", "Ex_5", "RORB")) + RotatedAxis()

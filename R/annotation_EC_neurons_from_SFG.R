@@ -101,19 +101,25 @@ cell_data <- df_cells
 cell_data <- readr::read_csv( "EC_neuron_type_per_condition.csv")
 # Calculate proportions
 cell_data <- cell_data %>%
-  group_by(condition) %>%
+  group_by(cell_type) %>%
   mutate(prop = freq / sum(freq))
+
+cell_data$cell_type <- factor(cell_data$cell_type, levels = c("Ex_1", "Ex_2",
+                                                              "Ex_3", "Ex_4",
+                                                              "Ex_5", "RORB",
+                                                              "Pv", "Sst",
+                                                              "Vip", "Non-Vip"))
 
 jpeg("images/EC_neurons_proportions.jpeg", units="in", width=15, height=10, res=300)
 # Plot the data
 ggplot(cell_data, aes(x = cell_type, y = prop, fill = condition)) +
-  geom_bar(stat = "identity", position = position_dodge(), color = "black") +
+  geom_bar(stat = "identity", color = "black") +
   theme_classic() +
   scale_fill_manual(values = c("#EE846E", "#6EBFEE")) +
   labs(x = "Cell Type",
        y = "Proportion",
        fill = "Condition") +
-  scale_y_continuous(labels = scales::percent, limits = c(0, 0.30)) +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1.0)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
         text = element_text(size = 25))
 dev.off()

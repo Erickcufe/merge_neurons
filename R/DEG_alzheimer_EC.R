@@ -197,3 +197,11 @@ table(all_up$cluster)
 readr::write_csv(all_up, "EC_DEG_up_ADvsCt_perCelltype.csv")
 
 readr::write_csv(all_down, "EC_DEG_down_ADvsCt_perCelltype.csv")
+
+
+deg_up <- readr::read_csv("EC_DEG_up_ADvsCt_perCelltype.csv")
+
+deg_down <- readr::read_csv("EC_DEG_down_ADvsCt_perCelltype.csv")
+
+
+table(deg_up$cluster)
