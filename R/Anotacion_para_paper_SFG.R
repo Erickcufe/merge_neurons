@@ -83,6 +83,22 @@ saveRDS(so.renamed, "anotacion_Parcial_neuronas_neuronType.rds")
 
 so.renamed <- readRDS("anotacion_Parcial_neuronas_neuronType.rds")
 
+so.renamed$group_id[so.renamed$dataset=="Kun_Leng"] <- "AD"
+
+
+to_clean <- so.renamed$tangle_id[so.renamed$dataset=="Morabito"]
+to_clean <- sapply(to_clean, function(x){
+  numbers <- stringr::str_extract_all(x, "\\d+")
+  numeric_values <- as.numeric(numbers[[1]])
+})
+
+so.renamed$braak[so.renamed$dataset=="Morabito"] <- to_clean
+
+so.renamed$braak[so.renamed$sample_id=="D1"] <- 0
+so.renamed$braak[so.renamed$sample_id=="D17"] <- 6
+
+
+saveRDS(so.renamed, "anotacion_Parcial_neuronas_neuronType.rds")
 
 jpeg("images/Clusters_anotated_neurontype.jpeg", units="in", width=15, height=10, res=300)
 DimPlot(so.renamed,reduction = "umap",
@@ -95,6 +111,8 @@ DimPlot(so.renamed,reduction = "tsne",
         cols = usecol("pal_unikn_pair", 19), label.size = 26, pt.size = 1)+
   theme(aspect.ratio = 1, text = element_text(size = 30))
 dev.off()
+
+df_cells <- table(so.renamed$braak, so.renamed$dataset) %>% as.data.frame()
 
 df_cells <- table(Idents(so.renamed), so.renamed$group_id) %>% as.data.frame()
 colnames(df_cells) <- c("cell_type", "condition", "freq")
