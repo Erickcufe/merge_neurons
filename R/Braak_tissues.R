@@ -5,7 +5,8 @@ library(dplyr)
 
 jpeg("images/SFG_CLUSTERS.jpeg", units="in", width=10, height=10, res=300)
 DimPlot(so.renamed, reduction = "umap", group.by = "braak", pt.size = 0.5, label.size = 30) +
-  theme(aspect.ratio = 1, text = element_text(size = 30))
+  theme(aspect.ratio = 1, text = element_text(size = 30),
+        axis.text = element_text(size = 30))
 dev.off()
 
 table(so.renamed$braak, so.renamed$sample_id)
@@ -153,4 +154,49 @@ f.markers_RORB <- FindMarkers(so.renamed,
 
 
 f.markers_RORB$gene <- rownames(f.markers_RORB)
-readr::write_csv(f.markers_RORB, "EC_DEG/RORB_SFG_BRAAK_6_0.csv")
+readr::write_csv(f.markers_RORB, "EC_DEG/RORB_EC_BRAAK_6_0.csv")
+
+
+# 6 vs 2
+
+f.markers_RORB <- FindMarkers(so.renamed,
+                              ident.1 = "6_RORB",
+                              ident.2 = "2_RORB",
+                              min.cells.group = 1,
+                              min.cells.feature = 1,
+                              min.pct = 0,
+                              logfc.threshold = 0,
+                              only.pos = FALSE)
+
+
+f.markers_RORB$gene <- rownames(f.markers_RORB)
+readr::write_csv(f.markers_RORB, "EC_DEG/RORB_EC_BRAAK_6_2.csv")
+
+
+# 2 vs 0
+
+f.markers_RORB <- FindMarkers(so.renamed,
+                              ident.1 = "2_RORB",
+                              ident.2 = "0_RORB",
+                              min.cells.group = 1,
+                              min.cells.feature = 1,
+                              min.pct = 0,
+                              logfc.threshold = 0,
+                              only.pos = FALSE)
+
+
+f.markers_RORB$gene <- rownames(f.markers_RORB)
+readr::write_csv(f.markers_RORB, "EC_DEG/RORB_EC_BRAAK_2_0.csv")
+
+
+so.renamed <- readRDS("EC_neurons_annoted_from_SFG.rds")
+
+DimPlot(so.renamed, reduction = "umap", group.by = "braak", pt.size = 0.5, label.size = 30) +
+  theme(aspect.ratio = 1, text = element_text(size = 30),
+        axis.text = element_text(size = 30))
+
+DimPlot(so.renamed, reduction = "umap", pt.size = 0.5, label.size = 30) +
+  theme(aspect.ratio = 1, text = element_text(size = 30),
+        axis.text = element_text(size = 30))
+
+
