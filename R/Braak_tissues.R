@@ -75,3 +75,82 @@ ggplot(cell_data, aes(x = cell_type, y = prop, fill = condition)) +
 
 table(so.renamed$sample_id)
 
+# RORB braak SFG
+
+# 6 vs 0
+
+so.renamed <- readRDS("anotacion_Parcial_neuronas_neuronType.rds")
+new_labels <- paste0(so.renamed$braak, "_", Idents(so.renamed))
+
+Idents(so.renamed) <- new_labels
+
+f.markers_RORB <- FindMarkers(so.renamed,
+                              ident.1 = "6_RORB",
+                              ident.2 = "0_RORB",
+                              min.cells.group = 1,
+                              min.cells.feature = 1,
+                              min.pct = 0,
+                              logfc.threshold = 0,
+                              only.pos = FALSE)
+
+
+f.markers_RORB$gene <- rownames(f.markers_RORB)
+readr::write_csv(f.markers_RORB, "SFG_DEG/RORB_SFG_BRAAK_6_0.csv")
+
+
+# 6 vs 2
+
+f.markers_RORB <- FindMarkers(so.renamed,
+                              ident.1 = "6_RORB",
+                              ident.2 = "2_RORB",
+                              min.cells.group = 1,
+                              min.cells.feature = 1,
+                              min.pct = 0,
+                              logfc.threshold = 0,
+                              only.pos = FALSE)
+
+
+f.markers_RORB$gene <- rownames(f.markers_RORB)
+readr::write_csv(f.markers_RORB, "SFG_DEG/RORB_SFG_BRAAK_6_2.csv")
+
+
+# 2 vs 0
+
+f.markers_RORB <- FindMarkers(so.renamed,
+                              ident.1 = "2_RORB",
+                              ident.2 = "0_RORB",
+                              min.cells.group = 1,
+                              min.cells.feature = 1,
+                              min.pct = 0,
+                              logfc.threshold = 0,
+                              only.pos = FALSE)
+
+
+f.markers_RORB$gene <- rownames(f.markers_RORB)
+readr::write_csv(f.markers_RORB, "SFG_DEG/RORB_SFG_BRAAK_2_0.csv")
+
+
+##
+
+so.renamed <- readRDS("EC_neurons_annoted_from_SFG.rds")
+
+# RORB braak SFG
+
+# 6 vs 0
+
+new_labels <- paste0(so.renamed$braak, "_", Idents(so.renamed))
+
+Idents(so.renamed) <- new_labels
+
+f.markers_RORB <- FindMarkers(so.renamed,
+                              ident.1 = "6_RORB",
+                              ident.2 = "0_RORB",
+                              min.cells.group = 1,
+                              min.cells.feature = 1,
+                              min.pct = 0,
+                              logfc.threshold = 0,
+                              only.pos = FALSE)
+
+
+f.markers_RORB$gene <- rownames(f.markers_RORB)
+readr::write_csv(f.markers_RORB, "EC_DEG/RORB_SFG_BRAAK_6_0.csv")
