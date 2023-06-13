@@ -135,7 +135,7 @@ readr::write_csv(f.markers_RORB, "SFG_DEG/RORB_SFG_BRAAK_2_0.csv")
 
 so.renamed <- readRDS("EC_neurons_annoted_from_SFG.rds")
 
-# RORB braak SFG
+# RORB braak EC
 
 # 6 vs 0
 
