@@ -131,6 +131,28 @@ f.markers_RORB$gene <- rownames(f.markers_RORB)
 readr::write_csv(f.markers_RORB, "SFG_DEG/RORB_SFG_BRAAK_2_0.csv")
 
 
+rorb_SFG_6_0 <- readr::read_csv("SFG_DEG/RORB_SFG_BRAAK_6_0.csv")
+rorb_SFG_6_0$cluster <- "6_0"
+rorb_SFG_6_2 <- readr::read_csv("SFG_DEG/RORB_SFG_BRAAK_6_2.csv")
+rorb_SFG_6_2$cluster <- "6_2"
+rorb_SFG_2_0 <- readr::read_csv("SFG_DEG/RORB_SFG_BRAAK_2_0.csv")
+rorb_SFG_2_0$cluster <- "2_0"
+
+all_up <- rbind(rorb_SFG_6_0, rorb_SFG_6_2, rorb_SFG_2_0) %>%
+  filter(p_val_adj<= 0.05) %>% filter(avg_log2FC >= 0.5)
+
+all_down <- rbind(rorb_SFG_6_0, rorb_SFG_6_2, rorb_SFG_2_0) %>%
+  filter(p_val_adj<= 0.05) %>% filter(avg_log2FC <= -0.5)
+
+table(all_down$cluster)
+table(all_up$cluster)
+
+readr::write_csv(all_up, "SFG_DEG/SFG_DEG_up_ADvsCt_perCelltype_perBraak.csv")
+
+readr::write_csv(all_down, "SFG_DEG/SFG_DEG_down_ADvsCt_perCelltype_perBraak.csv")
+
+
+
 ##
 
 so.renamed <- readRDS("EC_neurons_annoted_from_SFG.rds")
@@ -198,5 +220,26 @@ DimPlot(so.renamed, reduction = "umap", group.by = "braak", pt.size = 0.5, label
 DimPlot(so.renamed, reduction = "umap", pt.size = 0.5, label.size = 30) +
   theme(aspect.ratio = 1, text = element_text(size = 30),
         axis.text = element_text(size = 30))
+
+
+rorb_EC_6_0 <- readr::read_csv("EC_DEG/RORB_EC_BRAAK_6_0.csv")
+rorb_EC_6_0$cluster <- "6_0"
+rorb_EC_6_2 <- readr::read_csv("EC_DEG/RORB_EC_BRAAK_6_2.csv")
+rorb_EC_6_2$cluster <- "6_2"
+rorb_EC_2_0 <- readr::read_csv("EC_DEG/RORB_EC_BRAAK_2_0.csv")
+rorb_EC_2_0$cluster <- "2_0"
+
+all_up <- rbind(rorb_EC_6_0, rorb_EC_6_2, rorb_EC_2_0) %>%
+  filter(p_val_adj<= 0.05) %>% filter(avg_log2FC >= 0.5)
+
+all_down <- rbind(rorb_EC_6_0, rorb_EC_6_2, rorb_EC_2_0) %>%
+  filter(p_val_adj<= 0.05) %>% filter(avg_log2FC <= -0.5)
+
+table(all_down$cluster)
+table(all_up$cluster)
+
+readr::write_csv(all_up, "EC_DEG/EC_DEG_up_ADvsCt_perCelltype_perBraak.csv")
+
+readr::write_csv(all_down, "EC_DEG/EC_DEG_down_ADvsCt_perCelltype_perBraak.csv")
 
 
