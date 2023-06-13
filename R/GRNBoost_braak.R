@@ -148,30 +148,41 @@ net_SFG_regulation_6_0 <- rbind(net_SFG_6_0_down, net_SFG_6_0_up)
 g_ec_2_0 <- igraph::graph_from_data_frame(net_ec_regulation_2_0)
 igraph::write_graph(g_ec_2_0, "../merge_neurons/Nets_grnboost2/ec_rorb_regulons_2_0.graphml",
                     format = "graphml")
+readr::write_csv(net_ec_regulation_2_0, "Nets_grnboost2/ec_rorb_regulons_2_0.csv")
 
 # net_SFG_regulation_2_0
 g_sfg_2_0 <- igraph::graph_from_data_frame(net_SFG_regulation_2_0)
 igraph::write_graph(g_sfg_2_0, "../merge_neurons/Nets_grnboost2/sfg_rorb_regulons_2_0.graphml",
                     format = "graphml")
+readr::write_csv(net_SFG_regulation_2_0, "Nets_grnboost2/sfg_rorb_regulons_2_0.csv")
+
 
 # net_ec_regulation_6_2
 g_ec_6_2 <- igraph::graph_from_data_frame(net_ec_regulation_6_2)
 igraph::write_graph(g_ec_6_2, "../merge_neurons/Nets_grnboost2/ec_rorb_regulons_6_2.graphml",
                     format = "graphml")
+readr::write_csv(net_ec_regulation_6_2, "Nets_grnboost2/ec_rorb_regulons_6_2.csv")
+
 
 # net_SFG_regulation_6_2
 g_sfg_6_2 <- igraph::graph_from_data_frame(net_SFG_regulation_6_2)
 igraph::write_graph(g_sfg_6_2, "../merge_neurons/Nets_grnboost2/sfg_rorb_regulons_6_2.graphml",
                     format = "graphml")
+readr::write_csv(net_SFG_regulation_6_2, "Nets_grnboost2/sfg_rorb_regulons_6_2.csv")
+
 
 # net_ec_regulation_6_0
 g_ec_6_0 <- igraph::graph_from_data_frame(net_ec_regulation_6_0)
 igraph::write_graph(g_ec_6_0, "../merge_neurons/Nets_grnboost2/ec_rorb_regulons_6_0.graphml",
                     format = "graphml")
+readr::write_csv(net_ec_regulation_6_0, "Nets_grnboost2/ec_rorb_regulons_6_0.csv")
+
 
 # net_SFG_regulation_6_0
 g_sfg_6_0 <- igraph::graph_from_data_frame(net_SFG_regulation_6_0)
 igraph::write_graph(g_sfg_6_0, "../merge_neurons/Nets_grnboost2/sfg_rorb_regulons_6_0.graphml",
                     format = "graphml")
+readr::write_csv(net_SFG_regulation_6_0, "Nets_grnboost2/sfg_rorb_regulons_6_0.csv")
+
 
 
