@@ -565,18 +565,27 @@ library(ggplot2)
 
 so.renamed <- ScaleData(so.renamed)
 # Single cell heatmap of feature expression
-DoHeatmap(subset(so.renamed), features = c("SYN1", "STX1A", "STX1B", "CPLX1", "DLG4", "PPFIA3"),
+DoHeatmap(subset(so.renamed), features = c("ZBTB7A", "JUND", "SMARCC2", "NFIB", "THRB", "NFE2L1", "NFIC", "EEF1A2", "NEUROD2", "SYN1"),
           size = 3,group.by = "ident")
 
 # Plot single genes
 
 # Ridge plots - from ggridges. Visualize single cell expression distributions in each cluster
 RidgePlot(so.renamed, features = c("SYN1", "STX1A", "STX1B", "CPLX1", "DLG4", "PPFIA3"),
-          idents = c("RORB"), group.by = "group_id") +
-  theme(text = element_text(size = 25))
+          idents = c("RORB"), group.by = "dataset")
+
+RidgePlot(so.renamed, features = c("ZBTB7A", "JUND", "SMARCC2", "NFIB", "THRB", "NFE2L1", "NFIC", "EEF1A2", "NEUROD2", "SYN1"),
+          idents = c("RORB"), group.by = "group_id")
+
+RidgePlot(so.renamed, features = c("ZBTB7A", "JUND", "SMARCC2", "NFIB", "THRB", "NFE2L1", "NFIC", "EEF1A2", "NEUROD2", "SYN1"),
+          idents = c("Sst"), group.by = "braak")
+
+# Nuclear events
+RidgePlot(so.renamed, features = c("EGR1", "ARC", "JUND", "PPP2R1A"),
+          idents = c("RORB"), group.by = "braak")
 
 RidgePlot(so.renamed, features = c("PPFIA3"),
-          idents = c("RORB"), group.by = "group_id") +
+          idents = c("RORB", "Ex_1"), group.by = "braak") +
   theme(text = element_text(size = 25),
         title = element_text(size = 25)) +
   labs(x = NULL, y = NULL, color = NULL, alt_insight = NULL)
