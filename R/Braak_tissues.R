@@ -98,6 +98,84 @@ f.markers_RORB <- FindMarkers(so.renamed,
 f.markers_RORB$gene <- rownames(f.markers_RORB)
 readr::write_csv(f.markers_RORB, "SFG_DEG/RORB_SFG_BRAAK_6_0.csv")
 
+# 6 vs 5
+
+f.markers_RORB <- FindMarkers(so.renamed,
+                              ident.1 = "6_RORB",
+                              ident.2 = "5_RORB",
+                              min.cells.group = 1,
+                              min.cells.feature = 1,
+                              min.pct = 0,
+                              logfc.threshold = 0,
+                              only.pos = FALSE)
+
+
+f.markers_RORB$gene <- rownames(f.markers_RORB)
+readr::write_csv(f.markers_RORB, "SFG_DEG/RORB_SFG_BRAAK_6_5.csv")
+
+
+# 5 vs 3
+
+f.markers_RORB <- FindMarkers(so.renamed,
+                              ident.1 = "5_RORB",
+                              ident.2 = "3_RORB",
+                              min.cells.group = 1,
+                              min.cells.feature = 1,
+                              min.pct = 0,
+                              logfc.threshold = 0,
+                              only.pos = FALSE)
+
+
+f.markers_RORB$gene <- rownames(f.markers_RORB)
+readr::write_csv(f.markers_RORB, "SFG_DEG/RORB_SFG_BRAAK_5_3.csv")
+
+
+# 3 vs 2
+
+f.markers_RORB <- FindMarkers(so.renamed,
+                              ident.1 = "3_RORB",
+                              ident.2 = "2_RORB",
+                              min.cells.group = 1,
+                              min.cells.feature = 1,
+                              min.pct = 0,
+                              logfc.threshold = 0,
+                              only.pos = FALSE)
+
+
+f.markers_RORB$gene <- rownames(f.markers_RORB)
+readr::write_csv(f.markers_RORB, "SFG_DEG/RORB_SFG_BRAAK_3_2.csv")
+
+# 2 vs 1
+
+f.markers_RORB <- FindMarkers(so.renamed,
+                              ident.1 = "2_RORB",
+                              ident.2 = "1_RORB",
+                              min.cells.group = 1,
+                              min.cells.feature = 1,
+                              min.pct = 0,
+                              logfc.threshold = 0,
+                              only.pos = FALSE)
+
+
+f.markers_RORB$gene <- rownames(f.markers_RORB)
+readr::write_csv(f.markers_RORB, "SFG_DEG/RORB_SFG_BRAAK_2_1.csv")
+
+
+# 1 vs 0
+
+f.markers_RORB <- FindMarkers(so.renamed,
+                              ident.1 = "1_RORB",
+                              ident.2 = "0_RORB",
+                              min.cells.group = 1,
+                              min.cells.feature = 1,
+                              min.pct = 0,
+                              logfc.threshold = 0,
+                              only.pos = FALSE)
+
+
+f.markers_RORB$gene <- rownames(f.markers_RORB)
+readr::write_csv(f.markers_RORB, "SFG_DEG/RORB_SFG_BRAAK_1_0.csv")
+
 
 # 6 vs 2
 

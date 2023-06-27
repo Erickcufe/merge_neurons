@@ -52,13 +52,30 @@ get_pathfinder <- function(f.markers, cell_type){
   return(output_)
 }
 
+# SFG Braak 6_0
 deg_6_0_SFG_down <- readr::read_csv("SFG_DEG/SFG_DEG_down_ADvsCt_perCelltype_perBraak.csv")
 deg_6_0_SFG_up <- readr::read_csv("SFG_DEG/SFG_DEG_up_ADvsCt_perCelltype_perBraak.csv")
 
 deg_6_0_SFG_up <- deg_6_0_SFG_up[deg_6_0_SFG_up$cluster=="6_0",]
 deg_6_0_SFG_down <- deg_6_0_SFG_down[deg_6_0_SFG_down$cluster=="6_0",]
 rorb_6_0_sfg <- rbind(deg_6_0_SFG_up, deg_6_0_SFG_down)
-
 get_pathfinder(rorb_6_0_sfg, cell_type = "6_0_sfg_rorb")
 
+# SFG Braak 6_2
+deg_6_2_SFG_up <- readr::read_csv("SFG_DEG/SFG_DEG_up_ADvsCt_perCelltype_perBraak.csv")
+deg_6_2_SFG_up <- deg_6_2_SFG_up[deg_6_2_SFG_up$cluster=="6_2",]
+
+deg_6_2_SFG_down <- readr::read_csv("SFG_DEG/SFG_DEG_down_ADvsCt_perCelltype_perBraak.csv")
+deg_6_2_SFG_down <- deg_6_2_SFG_down[deg_6_2_SFG_down$cluster=="6_2",]
+rorb_6_2_sfg <- rbind(deg_6_2_SFG_up, deg_6_2_SFG_down)
+get_pathfinder(rorb_6_2_sfg, cell_type = "6_2_sfg_rorb")
+
+# SFG Braak 2_0
+deg_2_0_SFG_up <- readr::read_csv("SFG_DEG/SFG_DEG_up_ADvsCt_perCelltype_perBraak.csv")
+deg_2_0_SFG_up <- deg_2_0_SFG_up[deg_2_0_SFG_up$cluster=="2_0",]
+
+deg_2_0_SFG_down <- readr::read_csv("SFG_DEG/SFG_DEG_down_ADvsCt_perCelltype_perBraak.csv")
+deg_2_0_SFG_down <- deg_2_0_SFG_down[deg_2_0_SFG_down$cluster=="2_0",]
+rorb_2_0_sfg <- rbind(deg_2_0_SFG_up, deg_2_0_SFG_down)
+get_pathfinder(rorb_2_0_sfg, cell_type = "2_0_sfg_rorb")
 
