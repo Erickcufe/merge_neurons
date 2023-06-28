@@ -17,7 +17,7 @@ make_DEG_and_PathFindR <- function(so, cell_type, braak, directory = "SFG_DEG"){
                           logfc.threshold = 0.25,
                           only.pos = FALSE)
 
-  cell_type <- paste0(braak, "_", 0, "_", cell_type)
+  cell_type <- paste0(braak, "_", 0, "_", cell_type, directory)
 
   f.markers$gene <- rownames(f.markers)
 
