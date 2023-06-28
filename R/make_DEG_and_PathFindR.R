@@ -36,7 +36,7 @@ make_DEG_and_PathFindR <- function(so, cell_type, braak, directory = "SFG_DEG"){
       # cell_type <- "RORB"
       markers_ex1 <- data.frame(Gene.symbol = f.markers$gene,
                                 logFC = f.markers$avg_log2FC,
-                                adj.P.Val = f.markers$p_val)
+                                adj.P.Val = f.markers$p_val_adj)
 
       dir_path <- paste0("results_pathfinder","_", cell_type, "_",i)
       output_ <- run_pathfindR(markers_ex1, output_dir = dir_path, gene_sets = i)
