@@ -48,7 +48,9 @@ make_DEG_and_PathFindR <- function(so, cell_type, braak, directory = "SFG_DEG"){
       print(enrichment_chart(output_, top_terms = 15) +
               theme(text = element_text(size = 25),
                     axis.text.x = element_text(size = 25),
-                    axis.text.y = element_text(size = 25)))
+                    axis.text.y = element_text(size = 25)) +
+              scale_color_gradient(low = "#f7fcb9", high = "#31a354")
+            )
       dev.off()
 
       name_term_gene_heatmap <- paste0("images/", cell_type,"_",i, "_","gene_heatmap.jpeg")
@@ -77,14 +79,14 @@ make_DEG_and_PathFindR <- function(so, cell_type, braak, directory = "SFG_DEG"){
 so_sfg <- readRDS("anotacion_Parcial_neuronas_neuronType.rds")
 
 # Braak 2 vs 0
-purrr::map(c("Ex_1", "Ex_2", "Ex_3", "Ex_4", "Ex_5",
-             "RORB", "Pv", "Sst", "Vip", "Non-Vip"), .f = make_DEG_and_PathFindR, braak = 2,
+purrr::map(c("Ex_4", "Ex_5",
+             "RORB", "Pv", "Sst", "Vip", "Non-Vip"), purrr::safely(.f = make_DEG_and_PathFindR), braak = 2,
            directory = "SFG_DEG", so = so_sfg,
            .progress = TRUE)
 
 # Braak 6 vs 0
 purrr::map(c("Ex_1", "Ex_2", "Ex_3", "Ex_4", "Ex_5",
-             "RORB", "Pv", "Sst", "Vip", "Non-Vip"), .f = make_DEG_and_PathFindR, braak = 6,
+             "RORB", "Pv", "Sst", "Vip", "Non-Vip"), purrr::safely(.f = make_DEG_and_PathFindR), braak = 6,
            directory = "SFG_DEG", so = so_sfg,
            .progress = TRUE)
 
@@ -93,12 +95,12 @@ so_ec <- readRDS("EC_neurons_annoted_from_SFG.rds")
 
 # Braak 2 vs 0
 purrr::map(c("Ex_1", "Ex_2", "Ex_3", "Ex_4", "Ex_5",
-             "RORB", "Pv", "Sst", "Vip", "Non-Vip"), .f = make_DEG_and_PathFindR, braak = 2,
+             "RORB", "Pv", "Sst", "Vip", "Non-Vip"), purrr::safely(.f = make_DEG_and_PathFindR), braak = 2,
            directory = "EC_DEG", so = so_ec,
            .progress = TRUE)
 
 # Braak 6 vs 0
 purrr::map(c("Ex_1", "Ex_2", "Ex_3", "Ex_4", "Ex_5",
-             "RORB", "Pv", "Sst", "Vip", "Non-Vip"), .f = make_DEG_and_PathFindR, braak = 6,
+             "RORB", "Pv", "Sst", "Vip", "Non-Vip"), purrr::safely(.f = make_DEG_and_PathFindR), braak = 6,
            directory = "EC_DEG", so = so_ec,
            .progress = TRUE)
