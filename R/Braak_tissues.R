@@ -36,6 +36,29 @@ ggplot(cell_data, aes(x = cell_type, y = prop, fill = condition)) +
         text = element_text(size = 25))
 
 
+# Para placa amyloide de Morabito
+
+df_cells <- table(Idents(so.renamed), so.renamed$amyloid_id) %>% as.data.frame()
+colnames(df_cells) <- c("cell_type", "condition", "freq")
+cell_data <- df_cells
+# Calculate proportions
+cell_data <- cell_data %>%
+  group_by(cell_type) %>%
+  mutate(prop = freq / sum(freq))
+
+# Plot the data
+ggplot(cell_data, aes(x = cell_type, y = prop, fill = condition)) +
+  geom_bar(stat = "identity", color = "black") +
+  theme_classic() +
+  scale_fill_manual(values = c("#25868C", "#25608C", "#258C5A", "#8C8325", "#8C5325", "#8C2725")) +
+  labs(x = "Cell Type",
+       y = "Proportion",
+       fill = "Braak") +
+  scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),
+        text = element_text(size = 25))
+
+
 # EC
 so.renamed <- readRDS("EC_neurons_annoted_from_SFG.rds")
 

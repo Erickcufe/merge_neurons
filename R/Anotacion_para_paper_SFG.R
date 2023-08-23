@@ -100,6 +100,8 @@ so.renamed$braak[so.renamed$sample_id=="D17"] <- 6
 
 saveRDS(so.renamed, "anotacion_Parcial_neuronas_neuronType.rds")
 
+so.renamed <- readRDS("anotacion_Parcial_neuronas_neuronType.rds")
+
 jpeg("images/Clusters_anotated_neurontype.jpeg", units="in", width=15, height=10, res=300)
 DimPlot(so.renamed,reduction = "umap",
         cols = usecol("pal_unikn_pair", 19), label.size = 26, pt.size = 1)+
