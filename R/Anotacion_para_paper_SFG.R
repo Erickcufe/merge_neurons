@@ -210,6 +210,8 @@ dev.off()
 f.markers <- FindAllMarkers(so.renamed, min.pct = 0.25, logfc.threshold = 0.25)
 readr::write_csv(f.markers, "gene_markers_per_cluster.csv")
 
+f.markers <- readr::read_csv("gene_markers_per_cluster.csv")
+
 f.markers %>%
   group_by(cluster) %>%
   top_n(n = 10, wt = avg_log2FC) -> top10

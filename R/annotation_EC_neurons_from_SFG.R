@@ -3,6 +3,15 @@ library(dplyr)
 library(SingleCellExperiment)
 library(Seurat)
 so_neuron_merge <- readRDS(file.path("../Datos_scRNA/neurons_integrated/EC", "so_neuron_merge_all_ref_16PC_SFG.rds"))
+# so_neuron_merge <- readRDS("EC_neurons_annoted_from_SFG.rds")
+so_neuron_merge$braak[so_neuron_merge$sample_id=="AD1-AD2"] <- 6
+so_neuron_merge$braak[so_neuron_merge$sample_id=="AD3-AD4"] <- 6
+so_neuron_merge$braak[so_neuron_merge$sample_id=="AD5-AD6"] <- 6
+so_neuron_merge$braak[so_neuron_merge$sample_id=="AD7-AD8"] <- 5
+so_neuron_merge$braak[so_neuron_merge$sample_id=="Ct1-Ct2"] <- 0
+so_neuron_merge$braak[so_neuron_merge$sample_id=="Ct3-Ct4"] <- 0
+so_neuron_merge$braak[so_neuron_merge$sample_id=="Ct5-Ct6"] <- 0
+so_neuron_merge$braak[so_neuron_merge$sample_id=="Ct7-Ct8"] <- 0
 sce <- as.SingleCellExperiment(so_neuron_merge, assay = "RNA")
 colData(sce) <- as.data.frame(colData(sce)) %>%
   mutate_if(is.character, as.factor) %>%
@@ -19,12 +28,15 @@ library(SingleR)
 # library(scater)
 
 pred <- SingleR(test = sce, ref = sce_sfg,
-                labels = colData(sce_sfg)$ident, assay.type.test=1,
-                BPPARAM= BiocParallel::MulticoreParam(4)) # 8 CPUs.
-pred_modf <- pred[!duplicated(row.names(pred)),]
+                labels = colData(sce_sfg)$ident, de.method = "wilcox",
+                de.n = 60,
+                BPPARAM= BiocParallel::MulticoreParam(6)) # 8 CPUs.
+# pred_modf <- pred[!duplicated(row.names(pred)),]
 colData(sce)$ProbLabels <- pred$labels
+sce$braak <- as.factor(sce$braak)
 jpeg("images/plotScore_annotated_EC_from_SFG.jpeg", units="in", width=10, height=10, res=300)
-plotScoreHeatmap(pred_modf)
+plotScoreHeatmap(pred,
+                 annotation_col = as.data.frame(colData(sce)[,"braak",drop=FALSE]))
 dev.off()
 
 library(densvis)
@@ -44,7 +56,8 @@ so_neuron_merge@meta.data$Proplabels <- sce$ProbLabels
 Idents(so_neuron_merge) <- so_neuron_merge@meta.data$Proplabels
 
 jpeg("images/neurons_EC_clusters_anotados_umap.jpeg", units="in", width=15, height=10, res=300)
-DimPlot(so_neuron_merge,reduction = "umap", cols = usecol("pal_unikn_pair", 10), label.size = 26, pt.size = 1)
+DimPlot(so_neuron_merge,reduction = "umap", cols = usecol("pal_unikn_pair", 10), label.size = 26, pt.size = 1)+
+  theme(text = element_text(size = 20))
 dev.off()
 
 

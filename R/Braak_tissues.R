@@ -62,16 +62,16 @@ ggplot(cell_data, aes(x = cell_type, y = prop, fill = condition)) +
 # EC
 so.renamed <- readRDS("EC_neurons_annoted_from_SFG.rds")
 
-so.renamed$braak[so.renamed$sample_id=="AD1-AD2"] <- 6
-so.renamed$braak[so.renamed$sample_id=="AD3-AD4"] <- 6
-so.renamed$braak[so.renamed$sample_id=="AD5-AD6"] <- 6
-so.renamed$braak[so.renamed$sample_id=="AD7-AD8"] <- 5
-so.renamed$braak[so.renamed$sample_id=="Ct1-Ct2"] <- 0
-so.renamed$braak[so.renamed$sample_id=="Ct3-Ct4"] <- 0
-so.renamed$braak[so.renamed$sample_id=="Ct5-Ct6"] <- 0
-so.renamed$braak[so.renamed$sample_id=="Ct7-Ct8"] <- 0
+# so.renamed$braak[so.renamed$sample_id=="AD1-AD2"] <- 6
+# so.renamed$braak[so.renamed$sample_id=="AD3-AD4"] <- 6
+# so.renamed$braak[so.renamed$sample_id=="AD5-AD6"] <- 6
+# so.renamed$braak[so.renamed$sample_id=="AD7-AD8"] <- 5
+# so.renamed$braak[so.renamed$sample_id=="Ct1-Ct2"] <- 0
+# so.renamed$braak[so.renamed$sample_id=="Ct3-Ct4"] <- 0
+# so.renamed$braak[so.renamed$sample_id=="Ct5-Ct6"] <- 0
+# so.renamed$braak[so.renamed$sample_id=="Ct7-Ct8"] <- 0
 
-saveRDS(so.renamed, "EC_neurons_annoted_from_SFG.rds")
+# saveRDS(so.renamed, "EC_neurons_annoted_from_SFG.rds")
 
 df_cells <- table(Idents(so.renamed), so.renamed$braak) %>% as.data.frame()
 colnames(df_cells) <- c("cell_type", "condition", "freq")
