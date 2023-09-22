@@ -1,11 +1,11 @@
-make_DEG_and_PathFindR <- function(so, cell_type, braak, directory = "SFG_DEG"){
+make_DEG_and_PathFindR <- function(so, cell_type, braak, directory = "SFG_DEG", braak_1= 0){
 
   suppressMessages(library(Seurat))
 
   new_labels <- paste0(so$braak, "_", Idents(so))
   Idents(so) <- new_labels
 
-  ident.2 <- paste0(0,"_",cell_type)
+  ident.2 <- paste0(braak_1,"_",cell_type)
   ident.1 <- paste0(braak,"_",cell_type)
 
   f.markers <- FindMarkers(so,
@@ -87,9 +87,17 @@ purrr::map(c("Ex_4", "Ex_5",
 # Braak 6 vs 0
 purrr::map(c("Ex_1", "Ex_2", "Ex_3", "Ex_4", "Ex_5",
              "RORB", "Pv", "Sst", "Vip", "Non-Vip"), purrr::safely(.f = make_DEG_and_PathFindR), braak = 6,
+           braak_1= 0,
            directory = "SFG_DEG", so = so_sfg,
            .progress = TRUE)
 
+# Braak 6 vs 2
+
+purrr::map(c("Ex_1", "Ex_2", "Ex_3", "Ex_4", "Ex_5",
+             "RORB", "Pv", "Sst", "Vip", "Non-Vip"), purrr::safely(.f = make_DEG_and_PathFindR), braak = 6,
+           braak_1= 2,
+           directory = "SFG_DEG", so = so_sfg,
+           .progress = TRUE)
 
 so_ec <- readRDS("EC_neurons_annoted_from_SFG.rds")
 
