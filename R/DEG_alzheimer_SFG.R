@@ -581,14 +581,22 @@ RidgePlot(so.renamed, features = c("ZBTB7A", "JUND", "SMARCC2", "NFIB", "THRB", 
           idents = c("Sst"), group.by = "braak")
 
 # Nuclear events
-RidgePlot(so.renamed, features = c("EGR1", "ARC", "JUND", "PPP2R1A"),
-          idents = c("RORB"), group.by = "braak")
-
-RidgePlot(so.renamed, features = c("PPFIA3"),
-          idents = c("RORB", "Ex_1"), group.by = "braak") +
+library("wesanderson")
+RidgePlot(so.renamed, features = c("EGR1","PEG3", "RORB", "JUND", "PRNP","CUX1", "YWHAZ"),
+          idents = c("RORB"), group.by = "braak") +
   theme(text = element_text(size = 25),
         title = element_text(size = 25)) +
-  labs(x = NULL, y = NULL, color = NULL, alt_insight = NULL)
+  labs(x = NULL, y = NULL, color = NULL, alt_insight = NULL) +
+  scale_color_manual(values=wes_palette("Rushmore1"))
+
+RidgePlot(so.renamed, features = c("EGR1"),
+          idents = c("RORB"), group.by = "braak") +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 25),
+        axis.text.x = element_text(size = 25),
+        axis.text.y = element_text(size = 25)) +
+  labs(y = NULL, color = NULL, alt_insight = NULL)+
+  scale_color_manual(values=wes_palette("Rushmore1"))
 
 
 # Violin plot - Visualize single cell expression distributions in each cluster
@@ -596,5 +604,30 @@ VlnPlot(so.renamed, features = "SYN1")
 
 # Dot plots - the size of the dot corresponds to the percentage of cells expressing the
 # feature in each cluster. The color represents the average expression level
-DotPlot(so.renamed, features = c("SYN1", "STX1A", "STX1B", "CPLX1", "DLG4"),
+DotPlot(so.renamed, features = c("PEG3", "RORB", "JUND", "PRNP","CUX1", "YWHAZ"),
         idents = c("Ex_1", "Ex_2", "Ex_3", "Ex_4", "Ex_5", "RORB")) + RotatedAxis()
+
+DotPlot(so.renamed, features = c("PEG3", "RORB", "JUND", "PRNP","CUX1", "YWHAZ"),
+        idents = c("RORB"),
+        group.by = "braak",
+        cols = c("lightgrey", "red"))+ RotatedAxis() +
+  theme(text = element_text(size = 20))
+
+RidgePlot(so.renamed, features = c("PRNP"),
+          idents = c("RORB"), group.by = "braak", cols = c("#25868C", "#25608C", "#258C5A", "#8C8325", "#8C5325", "#8C2725")) +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 30),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20)) +
+  labs(y = NULL, color = NULL, alt_insight = NULL) +
+  scale_color_manual(values=wes_palette("Rushmore1"))
+
+VlnPlot(so.renamed, features = c("PRNP"),
+          idents = c("RORB"), group.by = "braak", cols = c("#25868C", "#25608C", "#258C5A", "#8C8325", "#8C5325", "#8C2725")) +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 30),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20)) +
+  labs(color = NULL, alt_insight = NULL) +
+  scale_color_manual(values=wes_palette("Rushmore1"))
+

@@ -17,7 +17,7 @@ make_DEG_and_PathFindR <- function(so, cell_type, braak, directory = "SFG_DEG", 
                           logfc.threshold = 0.25,
                           only.pos = FALSE)
 
-  cell_type <- paste0(braak, "_", 0, "_", cell_type,"_", directory)
+  cell_type <- paste0(braak, "_", braak_1, "_", cell_type,"_", directory)
 
   f.markers$gene <- rownames(f.markers)
 
@@ -111,4 +111,12 @@ purrr::map(c("Ex_1", "Ex_2", "Ex_3", "Ex_4", "Ex_5",
 purrr::map(c("Ex_1", "Ex_2", "Ex_3", "Ex_4", "Ex_5",
              "RORB", "Pv", "Sst", "Vip", "Non-Vip"), purrr::safely(.f = make_DEG_and_PathFindR), braak = 6,
            directory = "EC_DEG", so = so_ec,
+           .progress = TRUE)
+
+# Braak 6 vs 2
+
+purrr::map(c("Ex_1", "Ex_2", "Ex_3", "Ex_4", "Ex_5",
+             "RORB", "Pv", "Sst", "Vip", "Non-Vip"), purrr::safely(.f = make_DEG_and_PathFindR), braak = 6,
+           braak_1= 2,
+           directory = "SFG_DEG", so = so_ec,
            .progress = TRUE)
