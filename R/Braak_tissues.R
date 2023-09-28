@@ -330,6 +330,53 @@ RidgePlot(so.renamed, features = c("PRNP"),
   labs(y = NULL, color = NULL, alt_insight = NULL) +
   scale_color_manual(values=wes_palette("Rushmore1"))
 
+RidgePlot(so.renamed, features = c("PKM"),
+          idents = c("RORB"), group.by = "braak", cols = c("#25868C","#258C5A", "#8C5325", "#8C2725")) +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 30),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20)) +
+  labs(y = NULL, color = NULL, alt_insight = NULL)
+
+VlnPlot(so.renamed, features = c("PRNP"),
+        idents = c("RORB"), group.by = "braak", cols = c("#25868C","#258C5A", "#8C5325", "#8C2725")) +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 30),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20))
+
+
+RidgePlot(so.renamed, features = c("FOXP1"),
+          idents = c("RORB"), group.by = "braak", cols = c("#25868C","#258C5A", "#8C5325", "#8C2725")) +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 30),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20)) +
+  labs(y = NULL, color = NULL, alt_insight = NULL)
+
+VlnPlot(so.renamed, features = c("FOXP1"),
+        idents = c("RORB"), group.by = "braak", cols = c("#25868C","#258C5A", "#8C5325", "#8C2725")) +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 30),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20))
+
+
+RidgePlot(so.renamed, features = c("PKM"),
+          idents = c("RORB"), group.by = "braak", cols = c("#25868C","#258C5A", "#8C5325", "#8C2725")) +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 30),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20)) +
+  labs(y = NULL, color = NULL, alt_insight = NULL)
+
+VlnPlot(so.renamed, features = c("PKM"),
+        idents = c("RORB"), group.by = "braak", cols = c("#25868C","#258C5A", "#8C5325", "#8C2725")) +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 30),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20))
+
 DimPlot(so.renamed, reduction = "umap", group.by = "braak", pt.size = 0.5, label.size = 30) +
   theme(aspect.ratio = 1, text = element_text(size = 30),
         axis.text = element_text(size = 30))
