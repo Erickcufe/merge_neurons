@@ -74,3 +74,63 @@ enrichment_chart(output_, top_terms = 15) +
 
 
 
+so_sfg <- readRDS("anotacion_Parcial_neuronas_neuronType.rds")
+
+RidgePlot(so_sfg, features = c("NFE2L1"),
+          idents = c("RORB"), group.by = "braak", cols = c("#25868C", "#25608C", "#258C5A", "#8C8325", "#8C5325", "#8C2725")) +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 30),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20)) +
+  labs(y = NULL, color = NULL, alt_insight = NULL)
+
+VlnPlot(so_sfg, features = c("NFE2L1"),
+        idents = c("RORB"), group.by = "braak", cols = c("#25868C", "#25608C", "#258C5A", "#8C8325", "#8C5325", "#8C2725")) +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 30),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20)) +
+  labs(color = NULL, alt_insight = NULL)
+
+
+#FAIM2
+RidgePlot(so_sfg, features = c("FAIM2"),
+          idents = c("RORB"), group.by = "braak", cols = c("#25868C", "#25608C", "#258C5A", "#8C8325", "#8C5325", "#8C2725")) +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 30),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20)) +
+  labs(y = NULL, color = NULL, alt_insight = NULL)
+
+VlnPlot(so_sfg, features = c("FAIM2"),
+        idents = c("RORB"), group.by = "braak", cols = c("#25868C", "#25608C", "#258C5A", "#8C8325", "#8C5325", "#8C2725")) +
+  theme(text = element_text(size = 25),
+        title = element_text(size = 30),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 20)) +
+  labs(color = NULL, alt_insight = NULL)
+
+
+braak_2_0 <- readr::read_csv("SFG_DEG/2_0_RORB_NFE2L1_SFG_DEG_NFE2L1.csv")
+braak_6_2 <- readr::read_csv("SFG_DEG/6_2_RORB_NFE2L1_SFG_DEG_NFE2L1.csv")
+braak_6_0 <- readr::read_csv("SFG_DEG/6_0_RORB_NFE2L1_SFG_DEG_NFE2L1.csv")
+
+braak_2_0$braak <- "Braak 2 vs Braak 0"
+braak_6_2$braak <- "Braak 6 vs Braak 2"
+braak_6_0$braak <- "Braak 6 vs Braak 0"
+
+
+
+brks <- rbind(braak_2_0, braak_6_2, braak_6_0) %>%
+  filter(p_val_adj <= 0.001)
+brks$braak <- factor(brks$braak,levels = c("Braak 2 vs Braak 0","Braak 6 vs Braak 2", "Braak 6 vs Braak 0"))
+brks_1 <- brks[brks$avg_log2FC >= 0.5,]
+brks_2 <- brks[brks$avg_log2FC <= -0.5,]
+brks <- rbind(brks_1, brks_2)
+ggplot(brks, aes(x = avg_log2FC, y = gene, fill = braak))+
+  geom_col() + theme_linedraw()+
+  scale_fill_manual(values =  c("#25887E","#516143",  "#605051")) +
+  facet_wrap(~braak) +
+  theme(text = element_text(size = 20),
+        axis.text.y = element_text(size = 15)) +
+  labs(x = "Avg Log2(FC)", y = "Genes", fill = NULL, alt_insight = NULL, tag = NULL)

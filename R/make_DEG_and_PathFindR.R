@@ -243,3 +243,23 @@ purrr::map(c("RORB"), purrr::safely(.f = make_DEG_and_PathFindR_TF), braak = 6,
            directory = "SFG_DEG", so = so_sfg,net = final_net_common, TF = "PKM",
            .progress = TRUE)
 
+
+# NFE2L1
+# Braak 2 vs 0
+purrr::map(c("RORB"), purrr::safely(.f = make_DEG_and_PathFindR_TF), braak = 2,
+           directory = "SFG_DEG", so = so_sfg, net = final_net_common, TF = "NFE2L1",
+           .progress = TRUE)
+
+# Braak 6 vs 0
+purrr::map(c("RORB"), purrr::safely(.f = make_DEG_and_PathFindR_TF), braak = 6,
+           braak_1= 0,
+           directory = "SFG_DEG", so = so_sfg,net = final_net_common, TF = "NFE2L1",
+           .progress = TRUE)
+
+# Braak 6 vs 2
+
+purrr::map(c("RORB"), purrr::safely(.f = make_DEG_and_PathFindR_TF), braak = 6,
+           braak_1= 2,
+           directory = "SFG_DEG", so = so_sfg,net = final_net_common, TF = "NFE2L1",
+           .progress = TRUE)
+
