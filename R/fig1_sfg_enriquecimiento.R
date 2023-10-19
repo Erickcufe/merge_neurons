@@ -80,6 +80,10 @@ enrich_2_0_rorb$dataset <- "2 vs 0"
 enrich_6_0_rorb$dataset <- "6 vs 0"
 enrich_6_2_rorb$dataset <- "6 vs 2"
 
+enrich_2_0_rorb$tissue <- "FC"
+enrich_6_0_rorb$tissue <- "FC"
+enrich_6_2_rorb$tissue <- "FC"
+
 all <- rbind(enrich_2_0_rorb, enrich_6_2_rorb, enrich_6_0_rorb)
 
 
@@ -94,3 +98,40 @@ ggplot(data = all, aes(x = Fold_Enrichment, y = reorder(Term_Description, Fold_E
   labs(x = "Fold Enrichment", fill = "-Log10(P-value)", alt_insight = NULL,
        y = NULL) +
   facet_grid(~dataset)
+
+
+
+
+## PARA FIGURA 2
+
+enrich_6_0_rorb_ec <- readRDS("6_0_RORB_EC_DEG_KEGG.rds") %>% head(10)
+enrich_6_2_rorb_ec <- readRDS("6_2_RORB_EC_DEG_KEGG.rds") %>% head(10)
+enrich_2_0_rorb_ec <- readRDS("2_0_RORB_EC_DEG_KEGG.rds") %>% head(10)
+
+enrich_2_0_rorb_ec$dataset <- "2 vs 0"
+enrich_6_0_rorb_ec$dataset <- "6 vs 0"
+enrich_6_2_rorb_ec$dataset <- "6 vs 2"
+enrich_2_0_rorb_ec$tissue <- "EC"
+enrich_6_0_rorb_ec$tissue <- "EC"
+enrich_6_2_rorb_ec$tissue <- "EC"
+
+
+all <- rbind(enrich_2_0_rorb, enrich_6_2_rorb, enrich_6_0_rorb,
+             enrich_6_0_rorb_ec, enrich_6_2_rorb_ec, enrich_2_0_rorb_ec)
+
+
+all$dataset <- factor(all$dataset, levels = c("2 vs 0",
+                                              "6 vs 2",
+                                              "6 vs 0"))
+
+ggplot(data = all, aes(x = Fold_Enrichment, y = reorder(Term_Description, Fold_Enrichment),
+                       fill = -log10(lowest_p)))+
+  geom_col(color = "black") + theme_linedraw() +
+  scale_fill_gradient(low = "#FA9A3A", high = "#C6490B") +
+  theme(text = element_text(size = 20),
+        title = element_text(size = 20),
+        axis.text.x = element_text(size = 20),
+        axis.text.y = element_text(size = 15))+
+  labs(x = "Fold Enrichment", fill = "-Log10(P-value)", alt_insight = NULL,
+       y = NULL) +
+  facet_wrap(~tissue + dataset)
