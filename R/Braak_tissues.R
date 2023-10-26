@@ -9,11 +9,56 @@ DimPlot(so.renamed, reduction = "umap", group.by = "braak", pt.size = 0.5, label
         axis.text = element_text(size = 30))
 dev.off()
 
-table(so.renamed$braak, so.renamed$sample_id)
+# Numero total de muestras en ese estadio
+table(so_sfg$sample_id, so_sfg$braak)
+
+braak0 <- 5
+braak1 <- 5
+braak2 <- 7
+braak3 <- 1
+braak5 <- 3
+braak6 <- 18
+
+total <- 5 + 5 + 7 + 1 + 3 + 18
+
+
+table(so.renamed$sample_id)
 sum(is.na(so.renamed$braak))
 
-
+table(so_sfg$sample_id, so_sfg$braak)
 # df_cells <- table(so.renamed$braak, so.renamed$dataset) %>% as.data.frame()
+df_sfg <- table(Idents(so_sfg), so_sfg$braak) %>%
+  as.data.frame()
+colnames(df_sfg) <- c("cell_type", "condition", "freq")
+
+for(i in 1:nrow(df_sfg)){
+  if(df_sfg$condition[i] == "0"){
+    df_sfg$freq[i] <- df_sfg$freq[i]/braak0
+  }
+  if(df_sfg$condition[i] == "1"){
+    df_sfg$freq[i] <- df_sfg$freq[i]/braak1
+  }
+  if(df_sfg$condition[i] == "2"){
+    df_sfg$freq[i] <- df_sfg$freq[i]/braak2
+  }
+  if(df_sfg$condition[i] == "3"){
+    df_sfg$freq[i] <- df_sfg$freq[i]/braak3
+  }
+  if(df_sfg$condition[i] == "5"){
+    df_sfg$freq[i] <- df_sfg$freq[i]/braak5
+  }
+  if(df_sfg$condition[i] == "6"){
+    df_sfg$freq[i] <- df_sfg$freq[i]/braak6
+  }
+}
+
+# multiplicamos por factores de normalización, los cuales son el numero
+# total de muestras por estadio
+
+cell_data <- df_sfg %>%
+  group_by(cell_type) %>%
+  mutate(prop = freq / sum(freq))
+
 
 df_cells <- table(Idents(so.renamed), so.renamed$braak) %>% as.data.frame()
 colnames(df_cells) <- c("cell_type", "condition", "freq")
@@ -29,7 +74,7 @@ ggplot(cell_data, aes(x = cell_type, y = prop, fill = condition)) +
   theme_classic() +
   scale_fill_manual(values = c("#25868C", "#25608C", "#258C5A", "#8C8325", "#8C5325", "#8C2725")) +
   labs(x = "Cell Type",
-       y = "Proportion",
+       y = "Relative abundance",
        fill = "Braak") +
   scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
