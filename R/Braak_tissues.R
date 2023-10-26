@@ -105,7 +105,7 @@ ggplot(cell_data, aes(x = cell_type, y = prop, fill = condition)) +
 
 
 # EC
-so.renamed <- readRDS("EC_neurons_annoted_from_SFG.rds")
+so_ec <- readRDS("EC_neurons_annoted_from_SFG.rds")
 
 # so.renamed$braak[so.renamed$sample_id=="AD1-AD2"] <- 6
 # so.renamed$braak[so.renamed$sample_id=="AD3-AD4"] <- 6
@@ -117,6 +117,52 @@ so.renamed <- readRDS("EC_neurons_annoted_from_SFG.rds")
 # so.renamed$braak[so.renamed$sample_id=="Ct7-Ct8"] <- 0
 
 # saveRDS(so.renamed, "EC_neurons_annoted_from_SFG.rds")
+
+# Numero total de muestras en ese estadio
+table(so_ec$sample_id, so_ec$braak)
+
+braak0 <- 7
+braak2 <- 4
+braak5 <- 1
+braak6 <- 5
+
+total <- 5 + 5 + 7 + 1 + 3 + 18
+
+
+# df_cells <- table(so.renamed$braak, so.renamed$dataset) %>% as.data.frame()
+df_ec <- table(Idents(so_ec), so_ec$braak) %>%
+  as.data.frame()
+colnames(df_ec) <- c("cell_type", "condition", "freq")
+
+for(i in 1:nrow(df_ec)){
+  if(df_ec$condition[i] == "0"){
+    df_ec$freq[i] <- df_ec$freq[i]/braak0
+  }
+  if(df_ec$condition[i] == "1"){
+    df_ec$freq[i] <- df_ec$freq[i]/braak1
+  }
+  if(df_ec$condition[i] == "2"){
+    df_ec$freq[i] <- df_ec$freq[i]/braak2
+  }
+  if(df_ec$condition[i] == "3"){
+    df_ec$freq[i] <- df_ec$freq[i]/braak3
+  }
+  if(df_ec$condition[i] == "5"){
+    df_ec$freq[i] <- df_ec$freq[i]/braak5
+  }
+  if(df_ec$condition[i] == "6"){
+    df_ec$freq[i] <- df_ec$freq[i]/braak6
+  }
+}
+
+# multiplicamos por factores de normalización, los cuales son el numero
+# total de muestras por estadio
+
+cell_data <- df_ec %>%
+  group_by(cell_type) %>%
+  mutate(prop = freq / sum(freq))
+
+
 
 df_cells <- table(Idents(so.renamed), so.renamed$braak) %>% as.data.frame()
 colnames(df_cells) <- c("cell_type", "condition", "freq")
@@ -136,7 +182,7 @@ ggplot(cell_data, aes(x = cell_type, y = prop, fill = condition)) +
   theme_classic() +
   scale_fill_manual(values = c("#25868C", "#258C5A", "#8C5325", "#8C2725")) +
   labs(x = "Cell Type",
-       y = "Proportion",
+       y = "Relative abundance",
        fill = "Braak") +
   scale_y_continuous(labels = scales::percent, limits = c(0, 1)) +
   theme(axis.text.x = element_text(angle = 45, hjust = 1),
