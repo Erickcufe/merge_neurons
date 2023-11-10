@@ -63,7 +63,31 @@ dev.off()
 
 saveRDS(so_neuron_merge, "EC_neurons_annoted_from_SFG.rds")
 
-so.renamed <- so_neuron_merge
+so.renamed <- readRDS("EC_neurons_annoted_from_SFG.rds")
+
+library(Seurat)
+Idents(so.renamed) <- factor(Idents(so.renamed),
+                             levels = c("Ex_1", "Ex_2", "Ex_3",
+                                        "Ex_4", "Ex_5", "RORB",
+                                        "Vip", "Pv", "Sst", "Non-Vip"))
+
+f.markers <- FindAllMarkers(so.renamed, min.pct = 0.25, logfc.threshold = 0.25)
+readr::write_csv(f.markers, "gene_markers_per_cluster.csv")
+
+f.markers <- readr::read_csv("gene_markers_per_cluster.csv")
+
+f.markers %>%
+  group_by(cluster) %>%
+  top_n(n = 10, wt = avg_log2FC) -> top10
+
+
+library(viridis)
+so.renamed <- ScaleData(so.renamed)
+jpeg("images/markers_Clusters_neuronsType_EC.jpeg", units="in", width=25, height=20, res=300)
+DoHeatmap(so.renamed, features = top10$gene) +
+  theme(text = element_text(size = 18)) +
+  scico::scale_fill_scico(palette = "imola")
+dev.off()
 
 df_cells <- table(Idents(so.renamed), so.renamed$disease) %>% as.data.frame()
 colnames(df_cells) <- c("cell_type", "condition", "freq")
