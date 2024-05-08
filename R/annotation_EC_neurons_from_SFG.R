@@ -78,7 +78,7 @@ f.markers <- readr::read_csv("gene_markers_per_cluster.csv")
 
 f.markers %>%
   group_by(cluster) %>%
-  top_n(n = 10, wt = avg_log2FC) -> top10
+  top_n(n = 5, wt = avg_log2FC) -> top10
 
 
 library(viridis)

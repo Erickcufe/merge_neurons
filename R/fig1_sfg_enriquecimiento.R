@@ -78,7 +78,7 @@ ggplot(data = enrich_6_2_rorb, aes(x = Fold_Enrichment, y = reorder(Term_Descrip
 
 enrich_2_0_rorb$dataset <- "Early Braak"
 enrich_6_0_rorb$dataset <- "Late Braak"
-enrich_6_2_rorb$dataset <- "Transient Braak"
+enrich_6_2_rorb$dataset <- "Trasient Braak"
 
 enrich_2_0_rorb$tissue <- "FC"
 enrich_6_0_rorb$tissue <- "FC"
@@ -110,7 +110,7 @@ enrich_2_0_rorb_ec <- readRDS("2_0_RORB_EC_DEG_KEGG.rds") %>% head(10)
 
 enrich_2_0_rorb_ec$dataset <- "Early Braak"
 enrich_6_0_rorb_ec$dataset <- "Late Braak"
-enrich_6_2_rorb_ec$dataset <- "Transient Braak"
+enrich_6_2_rorb_ec$dataset <- "Trasient Braak"
 enrich_2_0_rorb_ec$tissue <- "EC"
 enrich_6_0_rorb_ec$tissue <- "EC"
 enrich_6_2_rorb_ec$tissue <- "EC"
@@ -123,7 +123,7 @@ all <- rbind(enrich_2_0_rorb, enrich_6_2_rorb, enrich_6_0_rorb,
 all$tissue_braak <- paste(all$tissue, all$dataset)
 
 all$dataset <- factor(all$dataset, levels = c("Early Braak",
-                                              "Transient Braak",
+                                              "Trasient Braak",
                                               "Late Braak"))
 
 all$Term_Description <- factor(all$Term_Description, levels = c("Focal adhesion",
@@ -179,6 +179,9 @@ all <- all[all$Term_Description %not% c("Circadian rhythm", "
 
 all <- all[all$Term_Description %not% c("TGF-beta signaling pathway"),]
 
+all <- readr::read_csv("../figuras_paper/tabla_2.csv")
+all$dataset <- gsub("Transient Braak", "Trasient Braak", all$dataset)
+all$dataset <- factor(all$dataset, levels = c("Early Braak", "Trasient Braak", "Late Braak"))
 
 ggplot(data = all, aes(x = tissue, y = Term_Description,
                        fill = Fold_Enrichment))+
